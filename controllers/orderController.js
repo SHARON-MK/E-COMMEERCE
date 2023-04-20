@@ -7,9 +7,12 @@ const order = require('../models/orderModel');
 const cart = require('../models/cartModel');
 const Razorpay = require('razorpay')
 
+let dontenv = require('dotenv')
+dontenv.config()
+
 var instance = new Razorpay({
-    key_id: "rzp_test_jrrHKb6Ek3iFiJ",
-    key_secret: "1NX6E6KMHG8qrUzyU3jdETtD"
+    key_id: process.env.razorpayId,
+    key_secret: process.env.razorpayKey
 });
 
 
@@ -107,7 +110,7 @@ const verifyOnlinePayment =async(req,res)=>{
         const details= (req.body)
        
         const crypto = require('crypto');
-        let hmac = crypto.createHmac('sha256', '1NX6E6KMHG8qrUzyU3jdETtD');
+        let hmac = crypto.createHmac('sha256', process.env.razorpayKey);
         hmac.update(details.payment.razorpay_order_id + '|' + details.payment.razorpay_payment_id)  
             
         hmac = hmac.digest('hex');
