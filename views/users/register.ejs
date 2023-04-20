@@ -1,0 +1,118 @@
+<%- include('../partials/users/loginheader.ejs') %>
+
+	<!--================Login Box Area =================-->
+	<section class="login_box_area section-margin">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="login_box_img">
+						<div class="hover">
+							<h4>Already a part of Books & MInd ?</h4>
+							<p>Login and continue your journey toward conquering new books</p>
+							<a class="button button-account" href="/login">Login Now</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="login_form_inner register_form_inner" >
+						
+
+						<form class="row login_form" action="/register" method="post" id="register_form">
+							<div class="col-md-12 form-group">
+								<input type="text" class="form-control" id="name" required name="name" placeholder="Username"
+									onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="email" class="form-control" id="email"  required name="email"
+									placeholder="Email Address" onfocus="this.placeholder = ''"
+									onblur="this.placeholder = 'Email Address'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="number" class="form-control" id="mobile" required name="mobile"
+									placeholder="enter mobile number" onfocus="this.placeholder = ''"
+									onblur="this.placeholder = 'Mobile number'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="password" class="form-control" id="password" required name="password"
+									placeholder="Password" onfocus="this.placeholder = ''"
+									onblur="this.placeholder = 'Password'">
+							</div>
+							<div class="col-md-12 form-group">
+								<input type="password" class="form-control" id="confirmPassword" required name="confirmPassword"
+									placeholder="Confirm Password" onfocus="this.placeholder = ''"
+									onblur="this.placeholder = 'Confirm Password'">
+							</div>
+							<div class="col-md-12 form-group">
+								<div class="creat_account">
+									<input type="checkbox" id="f-option2" name="selector">
+									<label for="f-option2">Keep me logged in</label>
+								</div>
+							</div>
+							<div class="col-md-12 form-group">
+								<button type="submit" value="submit"
+									class="button button-register w-100">Register</button>
+							</div>
+						</form>
+
+						<%
+						if(typeof message !== 'undefined'){
+						  %>
+						  <h4 style="color: rgb(232, 9, 9);"><%= message %></h4>
+						  <%
+						}
+					   %> 
+
+			
+	</section>
+	<!--================End Login Box Area =================-->
+	<script>
+
+		const name = document.getElementById('name')
+		const email = document.getElementById('email')
+		const mobile=document.getElementById('mobile')
+        const password = document.getElementById('password')
+         
+		name.addEventListener('input',()=>{
+          if(name.value.trim().length==''){
+            name.setCustomValidity('You must enter your good name')
+          }else{
+            name.setCustomValidity("")
+          }
+        })
+
+		email.addEventListener('input',()=>{
+          if(email.value.trim().length==''){
+            email.setCustomValidity('Please enter your email ID')
+          }else{
+            email.setCustomValidity("")
+          }
+        })
+
+
+		mobile.addEventListener('input',() => {
+          if(mobile.value.trim().length== 10){
+			mobile.setCustomValidity("")
+          }else{
+			mobile.setCustomValidity('mobile number should be 10 digit')
+          }
+        })
+
+		
+        password.addEventListener('input',() => {
+          if(password.value.trim().length< 6){
+          password.setCustomValidity('password requires 6 characters minimum and maximum of 10 characters')
+          }else if(password.value.trim().length > 10){
+			password.setCustomValidity('Password should only contain 10 characters maximum and 6 minimum')
+		  }
+		  else{
+            password.setCustomValidity("")
+          }
+        })
+
+       
+      </script>
+
+
+</body>
+
+</html>

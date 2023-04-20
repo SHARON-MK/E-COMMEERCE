@@ -1,0 +1,213 @@
+<%-include('../partials/userHeader.ejs')%>
+<form action="" id="checkout">
+<div class="colorlib-product">
+        <div class="container">
+            
+            
+            <div class="row">
+               
+
+                
+
+                <div class="col-lg-8">
+                    <h3>Billing Address</h3>
+                    <hr>
+                    <a href="/address" class="btn btn-primary ">Add Address</a>
+                    <br><br>
+                    <% if(address!=undefined  || address!=null){%>
+                        <div style="width:auto;height:auto" class="order_box">
+                            <%address.forEach((value,index)=>{%>
+                                <input class="form-check-input" name="address" type="radio" value="<%= value.name %> <%= value.address %>" id="flexCheckDefault" required> <br>
+                                <label class="form-check-label" for="flexCheckDefault">
+                                    <%=value.name%> <br>
+                                    <%=value.address%> <br>
+                                    Ph : <%=value.mobile%>,
+                                    <%=value.email%> <br>
+                                    <%=value.pin %>
+                                </label>
+                                <br>
+                                <div style="display: flex;">
+                                    <div>
+                                        <a class="btn hero-btn" style="color: rgb(21, 62, 165);" href="/edit_address?id=<%=value._id%>">edit</a>
+                                    </div>
+                                    <div style="margin-left: 10px;">
+                                        <a class="btn hero-btn" style="color: rgb(0, 0, 0);" href="/delete_address?id=<%=value._id%>">delete</a>
+                                    </div>
+                                </div>
+                                <hr>
+                            <% })%>
+                        </div>
+                    <% }else{
+                        %>
+                        <p><%=message%></p>
+                        <%
+                    }
+                    %>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="cart-detail">
+                                <h2>Cart Total</h2>
+                                <ul>
+                                    <li>
+                                        <span>Subtotal</span> <span><%=Total%></span>
+                                        <!-- <ul>
+                                            <li><span>1 x Product Name</span> <span>$00.00</span></li>
+                                            <li><span>1 x Product Name</span> <span>$00.00</span></li>
+                                        </ul> -->
+                                    </li>
+                                    <li><span>Shipping</span> <span>$0.00</span></li>
+                                    <li><span>Order Total</span> <span id="total1"><%=Total%></span></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="w-100"></div>
+
+                        <div class="col-md-12">
+                    
+                            <div class="cart-detail">
+                                
+
+                                <h2>Payment Method</h2>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="radio">
+                                            <label for="payement"><input type="radio" name="payment" value="online" required> ONLINE PAYMENT</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <!-- <div class="col-md-12">
+                                        <div class="radio">
+                                            <label><input type="radio" name="payment"> Check Payment</label>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="radio">
+                                            <label for="payement"><input type="radio" name="payment" value="COD" required> Cash On Delivery</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" required> I have read and accept the terms and
+                                                conditions</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p> <button type="submit" value="placeorder" class="btn btn-primary">Place order</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+        </div>
+    </form>
+   
+    </div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+  $("#checkout").submit((e)=>{
+    const amount = document.getElementById("total1").innerHTML;
+    
+    // const amount2 = document.getElementById("gt2").innerHTML;
+    // const discount = document.getElementById("gt3").innerHTML;
+    let address = $("input[name=address]:checked").val();
+    let payment = $("input[name=payment]:checked").val();
+    console.log(amount);
+    console.log(address)
+    console.log(payment)
+    e.preventDefault();
+    $.ajax({
+      url:"/checkout",
+      method:"post",
+      data:{
+        amount:amount,
+        address:address,
+        payment:payment
+      },
+      success:(response)=>{
+        if(response.success==true){
+            console.log("hsgdhshdhhaghfghggfjdsgf");
+          window.location.href = '/order-place';
+        }else{
+          razorpayPayment(response.order);
+        }
+      }
+    })
+  })
+
+  function razorpayPayment(order){
+
+          var options = {
+              "key": "rzp_test_rnMdAsy3UoFZGK", // Enter the Key ID generated from the Dashboard
+              "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+              "currency": "INR",
+              "name": "JTP FOOTWARE'S", //your business name
+              "description": "Test Transaction",
+              "image": "https://example.com/your_logo",
+              "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+              "handler": function (response){
+                
+// alert(response.razorpay_payment_id);
+// alert(response.razorpay_order_id);
+// alert(response.razorpay_signature)
+                  verifyPayment(response, order);
+              },
+              "prefill": {
+                  "name": "Gaurav Kumar", //your customer's name
+                  "email": "gaurav.kumar@example.com",
+                  "contact": "9000090000" 
+              },
+              "notes": {
+                  "address": "Razorpay Corporate Office"
+              },
+              "theme": {
+                  "color": "#3399cc"
+              }
+          };
+          var rzp1 = new Razorpay(options);
+              rzp1.open();
+        }
+  function verifyPayment(payment,order){
+    const amount = document.getElementById("total1").innerHTML;
+    // const amount2 = document.getElementById("gt2").innerHTML;
+    $.ajax({
+      url:"/verifyPayment",
+      method:"post",
+      data:{
+        payment,
+        amount,
+        order
+      },
+      success:(response)=>{
+        if(response.success){
+          location.href = '/order-place';
+          
+        }else{
+          alert('payment failed');
+          location.href = '/';
+        }
+      }
+    })
+  }
+  </script>
+
+
+    <%-include('../partials/userFooter.ejs')%>
