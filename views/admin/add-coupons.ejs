@@ -9,66 +9,58 @@
                 <div class="col-lg-6">
                     <div class="card" style="margin-top: 60px; margin-left: 60px;">
                         <div class="card-body">
-                            <div class="card-title">ADD NEW PRODUCT</div>
+                            <div class="card-title">ADD NEW COUPON</div>
                             <hr>
-                            <form method="post" enctype="multipart/form-data">
+                            <form method="post" action="">
                                 <div class="form-group">
-                                    <label for="input-1">Product Name</label>
-                                    <input type="text" name="name" class="form-control" required id="input-1"
-                                        placeholder="Enter product name">
+                                    <label for="input-1">Code</label>
+                                    <input type="text" name="code" class="form-control" required id="input-1"
+                                        placeholder="Enter coupon code">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="input-1">Price</label>
-                                    <input type="number" name="price" required class="form-control" id="input-1"
-                                        placeholder="Enter price">
-                                </div>
-
-                                <div class="form-floating mb-3">
-                                    <select name="category" style="background-color:rgb(58,133,169);"
-                                        class="form-select" id="floatingSelect"
-                                        aria-label="Floating label select example">
-                                        <% if(categoryData.length> 0) {
-                                            for(let i=0; i < categoryData.length; i++) { %>
-                                                <option value="<%= categoryData[i].name %>"
-                                                    style="background-color:rgb(58,133,169);">
-                                                    <%= categoryData[i].name %>
-                                                </option>
-                                                <% } } %>
+                                    <label for="input-1">Select discount Type</label>
+                                    <select name="discountType" style="background-color:rgb(58,133,169);">
+                                        <option style="background-color:rgb(58,133,169);">Fixed</option>
+                                        <option style="background-color:rgb(58,133,169);">Percantge type</option>
                                     </select>
-                                    <label for="floatingSelect">Select category</label>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="input-1">Description</label>
-                                    <input type="text" name="description" required class="form-control" id="input-1"
-                                        placeholder="Give description about the product">
-                                </div>
-
-                                <div id="preview"></div>
-                                <div class="form-group">
-                                    <label for="input-1">Image</label>
-                                    <input type="file" multiple name="image" required class="form-control" id="input-1">
                                 </div>
 
 
 
                                 <div class="form-group">
-                                    <label for="input-1">Enter stock </label>
-                                    <input type="number" name="stock" required class="form-control" id="input-1"
-                                        placeholder="Enter stock">
+                                    <label for="input-1">Discount amount</label>
+                                    <input type="number" name="discountAmount" required class="form-control" id="input-1"
+                                        placeholder='Enter discount amount'>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <label for="input-1">Max discount amount </label>
+                                    <input type="number" name="amount" required class="form-control" id="input-1"
+                                        placeholder="Enter Max discount amount">
                                 </div>
 
                                 <div class="form-group">
-                                    <select id="stock-status" name="status" style="background-color:rgb(58,133,169);">
-                                        <option style="background-color:rgb(58,133,169);">In Stock
-                                        </option>
-                                        <option style="background-color:rgb(58,133,169);">Out of
-                                            Stock</option>
-                                    </select>
-                                    <label for="stock-status">Select Stock Status</label>
+                                    <label for="input-1">Max cart amount</label>
+                                    <input type="number" name="cartamount" required class="form-control" id="input-1"
+                                        placeholder="Enter Max cart amount">
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="input-1">Expiry date</label>
+                                    <input type="date" name="expirydate" required class="form-control" id="input-1"
+                                        placeholder="Enter Expiry date">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="input-1">Max coupons</label>
+                                    <input type="number" name="couponcount" required class="form-control" id="input-1"
+                                        placeholder="Enter count of coupons">
+                                </div>
+
+                             
 
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-light px-5"><i class="icon-lock"></i>

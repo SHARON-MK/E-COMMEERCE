@@ -21,12 +21,12 @@
     <!-- Checkout Section Begin -->
     <section class="checkout spad">
         <div class="container">
-            <div class="row">
-                <!-- <div class="col-lg-12">
+            <!-- <div class="row">
+                <div class="col-lg-12">
                     <h6><span class="icon_tag_alt"></span> Have a coupon? <a href="#">Click here</a> to enter your code
                     </h6>
-                </div> -->
-            </div>
+                </div>
+            </div> -->
             <div class="checkout__form">
                 <h4>Billing Details</h4>
 
@@ -39,23 +39,36 @@
                                 <% for(let i=0; i < addressdata.address.length; i++) { %>
                                     <div class="custom-control custom-checkbox">
                                         <input type="radio" class="custom-control-input" id="address-<%= i %>"
-                                            name="address" type="radio" value="<%= addressdata.address[i].address %>" required>
+                                            name="address" type="radio" value="<%= addressdata.address[i].address %>"
+                                            required>
                                         <label class="custom-control-label" for="address-<%= i %>">
                                             <%= addressdata.address[i].firstname %>
-                                            <%= addressdata.address[i].lastname %><br>
+                                                <%= addressdata.address[i].lastname %><br>
                                                     Address: <%= addressdata.address[i].address %><br>
-                                                    Phone: <%= addressdata.address[i].phone %><br>
-                                                    Email: <%= addressdata.address[i].email %><br>
+                                                        Phone: <%= addressdata.address[i].phone %><br>
+                                                            Email: <%= addressdata.address[i].email %><br>
                                         </label>
                                     </div>
-                            <% } } else {%>
-                                    <p>no address found add a new address</p>
-                            <%}%>
+                                    <% } } else {%>
+                                        <p>no address found add a new address</p>
+                                        <%}%>
 
-                <a href="/add-address"><button type="button"class="btn btn-success rounded-pill m-2">Add another address</button></a>
-
-
+                                            <a href="/add-address"><button type="button"
+                                                    class="btn btn-success rounded-pill m-2">Add another
+                                                    address</button></a>
+                                            <div class="shoping__continue">
+                                                <div class="shoping__discount">
+                                                    <h5>Discount Codes</h5>
+                                                    <form action="#">
+                                                        <input type="text" placeholder="Enter your coupon code"
+                                                            id="code">
+                                                        <button type="submit" onclick="applycoupon($('#code').val())"
+                                                            class="site-btn">APPLY COUPON</button>
+                                                    </form>
+                                                </div>
+                                            </div>
                         </div>
+
                         <div class="col-lg-4 col-md-6">
                             <div class="checkout__order">
                                 <h4>Your Order</h4>
@@ -71,65 +84,61 @@
 
                                 </ul>
                                 <div class="checkout__order__subtotal">Subtotal <span>
-                                    Rs.<%=Total%>
+                                        <%=Total%>
                                     </span></div>
 
 
                                 <% if(userData.wallet> Total) { %>
 
                                     <div class="checkout__order__subtotal">Wallet <span>
-                                        Rs.<%= userData.wallet %>
+                                            <%= userData.wallet %>
                                         </span></div>
 
                                     <div class="checkout__order__subtotal">Used from wallet <span id="total1">
-                                            Rs.<%= Total %>
+                                            <%= Total %>
                                         </span></div>
-                                        <div>
-                                            <input type="hidden" name="payment" value="wallet">
-                                        </div>
+                                    <div>
+                                        <input type="hidden" name="payment" value="wallet">
+                                    </div>
 
 
-                                <% } else { %>
+                                    <% } else { %>
+
+                                        <div class="checkout__order__subtotal">Discount <span id="discount">
+                                           0
+                                        </span></div>
+
 
                                         <div class="checkout__order__subtotal">Wallet <span>
-                                            Rs.<%= userData.wallet %>
+                                                <%= userData.wallet %>
                                             </span></div>
 
-                                        <div class="checkout__order__total" >Amount to be paid <span id="total1">
-                                            Rs.<%= Total - userData.wallet %>
+                                        <div class="checkout__order__total">Amount to be paid <span id="total1">
+                                                <%= Total - userData.wallet %>
                                             </span></div>
 
                                         <div class="form-group">
-                                                <div class="col-md-12">
-                                                    <div class="radio">
-                                                        <label><input type="radio" name="payment" value="online" required> Online Payment
-                                                            </label>
-                                                    </div>
-                                                </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                                <div class="col-md-12">
-                                                    <div class="radio">
-                                                        <label><input type="radio" name="payment" value="COD" required> Cash On
-                                                            Delivery</label>
-                                                    </div>
-                                                </div>
-                                        </div>
-
-                                <% } %>
-
-
-
-
-                                            <!-- <div class="form-group">
                                             <div class="col-md-12">
                                                 <div class="radio">
-                                                    <label><input type="radio" name="optradio"> Check Payment</label>
+                                                    <label><input type="radio" name="payment" value="online" required>
+                                                        Online Payment
+                                                    </label>
                                                 </div>
                                             </div>
-                                        </div> -->
-                                           
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label><input type="radio" name="payment" value="COD" required> Cash
+                                                        On
+                                                        Delivery</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <% } %>
+
                                             <button type="submit" class="site-btn">PLACE ORDER</button>
                             </div>
                         </div>
@@ -137,7 +146,9 @@
                 </form>
             </div>
         </div>
+
     </section>
+
 
     <!-- Checkout Section End -->
 
@@ -147,9 +158,10 @@
 
 
     <script>
-        
+
         $("#checkout").submit((e) => {
             const amount = document.getElementById("total1").innerHTML;
+            const discountAmount = document.getElementById("discount").innerHTML;
             let address = $("input[name=address]:checked").val();
             let payment = $("input[name=payment]:checked").val();
             console.log(amount);
@@ -162,7 +174,8 @@
                 data: {
                     amount: amount,
                     address: address,
-                    payment: payment
+                    payment: payment,
+                    discountAmount:discountAmount
                 },
                 success: (response) => {
                     if (response.success == true) {
@@ -224,6 +237,77 @@
                     } else {
                         alert('payment failed');
                         location.href = '/';
+                    }
+                }
+            })
+        }
+
+        function applycoupon(code) {
+            const amount = document.getElementById('total1').innerHTML;
+            console.log(amount);
+            $.ajax({
+                url: "/applyCoupon",
+                data: {
+                    code: code,
+                    amount: amount
+                },
+                method: "post",
+                success: (response) => {
+                    console.log(response);
+                    if (response.user) {
+                        console.log("You have already used this coupon");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'This coupon already used by you!'
+                        })
+                    } else if (response.limit) {
+                        console.log("coupon limit exceeded");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'coupon limit exceeded!'
+                        })
+                    } else if (response.status) {
+                        console.log("This coupon now not in use");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'This coupon is not in use now!'
+                        })
+                    } else if (response.cartAmount) {
+                        console.log("You cant use the coupon...Buy more");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'You cant use the coupon...Buy more'
+                        })
+                    } else if (response.date) {
+                        console.log("coupon date expired");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Coupon expired!!!'
+                        })
+                    } else if (response.amountOkey) {
+                        console.log("discount granded");
+                        document.getElementById('discount').innerHTML = response.disAmount
+                        document.getElementById('total1').innerHTML = response.disTotal
+                        console.log("done");
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'Discount redeemed',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    } else if (response.invalid) {
+                        console.log("invalid coupon");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Invalid Coupon!!!'
+                        })
                     }
                 }
             })

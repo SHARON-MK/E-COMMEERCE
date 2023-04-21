@@ -5,6 +5,7 @@ const userController = require('../controllers/userController')
 const cartController = require('../controllers/cartController')
 const orderController = require('../controllers/orderController')
 const wishlistController = require('../controllers/wishlistController')
+const couponController = require('../controllers/couponController')
 const session = require('express-session')
 const auth = require('../middlewares/auth')
 
@@ -66,6 +67,8 @@ user_route.get('/order-place',orderController.orderplaced)
 // wishlist Controller
 user_route.post('/addtowhishlist',auth.isLogin,wishlistController.addtowhishlist)
 user_route.post('/whishToCart',auth.isLogin,wishlistController.addToCartFromWishlist)
+// coupon Controller
+user_route.post('/applyCoupon',couponController.applyCoupon)
 
 
 

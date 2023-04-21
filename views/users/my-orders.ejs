@@ -44,6 +44,7 @@
                                         <th scope="col">Order ID</th>
                                         <th scope="col">Order Date</th>
                                         <th scope="col">Amount</th>
+                                        <th scope="col">Paid</th>
                                         <th scope="col">Payment Method</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">Action</th>
@@ -65,6 +66,9 @@
                                                 </td>
                                                 <td>
                                                     <%= message[i].totalAmount %>
+                                                </td>
+                                                <td>
+                                                    <%= message[i].paid %>
                                                 </td>
                                                 <td>
                                                     <%= message[i].paymentMethod %>

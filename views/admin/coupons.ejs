@@ -3,29 +3,30 @@
 
   <div class="clearfix"></div>
 
-  
+
   <div class="content-wrapper">
     <div class="container-fluid">
-        
-        <div style="margin-top: 20px;">
-            <button type="button" class="btn btn-outline-info"><a href="/admin/coupons/add">ADD COUPONS</a></button>
-        </div>
-        
-      <div class="row" >
+
+      <div style="margin-top: 20px;">
+        <button type="button" class="btn btn-outline-info"><a href="/admin/coupons/add">ADD COUPONS</a></button>
+      </div>
+
+      <div class="row">
         <div class="col-lg-12">
           <div class="card" style="margin-top: 20px;">
             <div class="card-body">
               <h5 class="card-title">COUPON DETAILS</h5>
-              <div class="table-responsive">              
+              <div class="table-responsive">
                 <table class="table table-hover">
                   <thead>
                     <tr>
                       <th scope="col">#</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Price</th>
-                      <th scope="col">Category</th>
-                      <th scope="col">Image</th>
-                      <th scope="col">Stock</th>
+                      <th scope="col">Coupon code</th>
+                      <th scope="col">Discount amount</th>
+                      <th scope="col">Expiry Date</th>
+                      <th scope="col">Max cart amount </th>
+                      <th scope="col">Max discount</th>
+                      <th scope="col">Limit</th>
                       <th scope="col">Status</th>
                       <th scope="col">Action</th>
                     </tr>
@@ -38,38 +39,43 @@
                             <%= i+1 %>
                           </th>
                           <td>
-                            <%= message[i].name %>
+                            <%= message[i].code %>
                           </td>
                           <td>
-                            <%= message[i].price %>
+                            <%= message[i].discountAmount%>(<%=message[i].discountType%>) %>
                           </td>
                           <td>
-                            <%= message[i].category %>
+                            <%= message[i].expiryDate.toISOString().substring(0,10)%>
                           </td>
                           <td>
-                            <img style="width: 80px; height: 80px;" src="/productimages/<%= message[i].image[0] %>" alt="test">
-                        </td>
-                        <td>
-                          <%= message[i].stock %>
-                        </td>
-                        <td>
-                          <%= message[i].status %>
-                        </td>
-                        <td>
-                          <button type="button" class="btn btn-outline-info"><a href="/admin/products/delete?id=<%= message[i]._id%>">delete</a></button>
-                          <button type="button" class="btn btn-outline-info"><a href="/admin/products/edit?id=<%= message[i]._id%>">edit</a></button>
-                        </td>
-                        
-                          
-                          
-                                                   
-                          
+                            <%= message[i].maxCartAmount %>
+                          </td>
+                          <td>
+                            <%= message[i].maxDiscountAmount %>
+                          </td>
+                          <td>
+                            <%= message[i].maxUsers %>
+                          </td>
+                          <td>
+                            <%= message[i].status %>
+                          </td>
+                          <td>
+                            <button type="button" class="btn btn-outline-info"><a
+                                href="/admin/products/delete?id=<%= message[i]._id%>">delete</a></button>
+                            <button type="button" class="btn btn-outline-info"><a
+                                href="/admin/products/edit?id=<%= message[i]._id%>">edit</a></button>
+                          </td>
+
+
+
+
+
 
                         </tr>
                         <% } %>
                           <% } else { %>
                             <tr>
-                              <td colspan="3">Products not found</td>
+                              <td colspan="3">Coupons not found</td>
                             </tr>
                             <% } %>
                   </tbody>
@@ -79,7 +85,3 @@
           </div>
         </div>
       </div><!--End Row-->
-
-
-
-      

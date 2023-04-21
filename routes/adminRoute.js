@@ -74,6 +74,9 @@ admin_route.post('/products/add',upload.array('image'),productsController.addPro
 admin_route.post('/products/edit',upload.array('image'),productsController.postEditProduct)
 admin_route.post('/delete_image',productsController.deleteImage)
 
+// coupon controller
+admin_route.post('/coupons/add',couponController.postAddCoupon)
+
 
 
 module.exports = admin_route

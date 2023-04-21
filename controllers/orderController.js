@@ -24,20 +24,34 @@ const placeOrder = async (req, res) => {
         const userData = await User.findOne({ _id: req.session.user_id });
         const session = req.session.user_id
         const total = await cart.aggregate([{ $match: { userId: userData._id } }, { $unwind: "$products" }, { $project: { productPrice: "$products.productPrice", count: "$products.count" } }, { $group: { _id: null, total: { $sum: { $multiply: ["$productPrice", "$count"] } } } }]);
+        // let Total = req.body.amount
 
+        let discountAmount = req.body.discountAmount
+        console.log('discntamnt'+discountAmount);
 
-        const Total = total.length > 0 ? total[0].total : 0;
+        const TotalInitially = total.length > 0 ? total[0].total : 0;
+        const Total = TotalInitially -discountAmount
+        console.log('total'+Total);
+
         const userWalletAmount = userData.wallet
+        console.log('wall-amnt'+userWalletAmount);
 
         let paidAmount;
         let walletAmountUsed
         let walletAmountBalance
 
-
         if (userWalletAmount < Total) {
-            paidAmount = Total - userWalletAmount
-            walletAmountUsed = Total - paidAmount
+            paidAmount = req.body.amount
+ 
+            console.log('paid'+paidAmount);
+
+            walletAmountUsed = TotalInitially - paidAmount - discountAmount
+
+            console.log('w-used'+walletAmountUsed);
+
             walletAmountBalance = userWalletAmount - walletAmountUsed
+            console.log('w-balnce'+walletAmountBalance);
+
         } else {
             paidAmount = 0
             walletAmountUsed = Total
@@ -46,8 +60,12 @@ const placeOrder = async (req, res) => {
 
         await User.findOneAndUpdate({ _id: req.session.user_id }, { $set: { wallet: walletAmountBalance } })
 
-        const payment = req.body.payment;
-        const address = req.body.address
+        let payment = req.body.payment;
+        let address = req.body.address
+
+        if(payment === undefined){
+            payment = 'wallet'
+        }
 
 
         const cartData = await cart.findOne({ userId: req.session.user_id });
