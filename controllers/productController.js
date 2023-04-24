@@ -86,6 +86,7 @@ const editProduct = async (req, res) => {
     try {
         const id = req.query.id
         const productData = await products.findById({ _id: id })
+        console.log(productData);
         const categoryData = await category.find({is_block:0})
         if (productData) {
             res.render('edit-product', {productData,categoryData })

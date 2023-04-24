@@ -20,6 +20,7 @@ var instance = new Razorpay({
 // -------------------------
 const placeOrder = async (req, res) => {
     try {
+        console.log('hai');
        
         const userData = await User.findOne({ _id: req.session.user_id });
         const session = req.session.user_id
@@ -42,16 +43,8 @@ const placeOrder = async (req, res) => {
 
         if (userWalletAmount < Total) {
             paidAmount = req.body.amount
- 
-            console.log('paid'+paidAmount);
-
             walletAmountUsed = TotalInitially - paidAmount - discountAmount
-
-            console.log('w-used'+walletAmountUsed);
-
-            walletAmountBalance = userWalletAmount - walletAmountUsed
-            console.log('w-balnce'+walletAmountBalance);
-
+            walletAmountBalance = userWalletAmount - walletAmountUsed        
         } else {
             paidAmount = 0
             walletAmountUsed = Total
@@ -157,7 +150,7 @@ const verifyOnlinePayment =async(req,res)=>{
 // succes page
 const orderplaced =async (req,res)=>{
     try {
-  
+            console.log('sssss');
         const userData=await User.findOne({email:req.session.user_id})
         const session=req.session.email
   

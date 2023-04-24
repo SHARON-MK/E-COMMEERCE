@@ -100,6 +100,10 @@
                                     <div>
                                         <input type="hidden" name="payment" value="wallet">
                                     </div>
+                                    <div>
+                                        <input type="hidden" id="discount" value="0">
+                                    </div>
+                                  
 
 
                                     <% } else { %>
@@ -167,6 +171,7 @@
             console.log(amount);
             console.log(address)
             console.log(payment)
+            console.log(discountAmount)
             e.preventDefault();
             $.ajax({
                 url: "/checkout",

@@ -60,6 +60,8 @@ admin_route.get('/products/edit',auth.isLogin,productsController.editProduct)
 // coupon controller
 admin_route.get('/coupons',couponController.getCouponListPage)
 admin_route.get('/coupons/add',couponController.getCouponAddPage)
+admin_route.get('/coupons/delete',couponController.deleteCoupon)
+admin_route.get('/coupons/edit',couponController.editCoupon)
 
 
 
@@ -76,6 +78,7 @@ admin_route.post('/delete_image',productsController.deleteImage)
 
 // coupon controller
 admin_route.post('/coupons/add',couponController.postAddCoupon)
+admin_route.post('/coupons/edit',couponController.postEditCoupon)
 
 
 

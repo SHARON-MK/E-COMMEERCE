@@ -112,9 +112,66 @@ const applyCoupon = async (req, res) => {
 }
 // --------------------------------------------------------------
 
+
+
+// Delete coupon
+// --------------------------------------------------------------
+const deleteCoupon = async function (req, res) {
+    try {
+        const id = req.query.id
+       await coupon.deleteOne({_id:id})
+       res.redirect("/admin/coupons")
+    } catch (error) {
+        console.log(error);
+    }
+}
+// --------------------------------------------------------------
+
+
+// Edit coupon
+// --------------------------------------------------------------
+const editCoupon = async function (req, res) {
+    try {
+        const id = req.query.id
+        const couponData = await coupon.findById({_id:id})
+        console.log(couponData);
+        res.render("edit-coupon",{couponData})
+    } catch (error) {
+        console.log(error);
+    }
+}
+// --------------------------------------------------------------\
+
+
+// post Edit Coupon
+// --------------------------------------------------------------
+const postEditCoupon = async function (req, res) {
+    try {
+        const id = req.body.id
+        await coupon.updateMany({_id:id},{$set:{
+            code: req.body.code,
+            discountType: req.body.discountType,
+            discountAmount: req.body.discountAmount,
+            maxDiscountAmount: req.body.amount,
+            maxCartAmount: req.body.cartamount,
+            expiryDate: req.body.expirydate,
+            maxUsers: req.body.couponcount
+        }})
+
+        res.redirect("/admin/coupons")
+    } catch (error) {
+        console.log(error);
+    }
+}
+// --------------------------------------------------------------
+
+
 module.exports = {
     getCouponListPage,
     getCouponAddPage,
     postAddCoupon,
-    applyCoupon
+    applyCoupon,
+    deleteCoupon,
+    editCoupon,
+    postEditCoupon
 }

@@ -2,6 +2,7 @@ const users = require('../models/userModel')
 const address = require('../models/addressModel')
 const products = require('../models/productModel')
 const orders = require('../models/orderModel')
+const category = require('../models/categoryModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
 const session = require('express-session');
@@ -457,6 +458,49 @@ const getMyOrders = async (req, res) => {
 // --------------------------------------------------------------
 
 
+
+// To view all ORDERS from Profile
+// --------------------------------------------------------------
+const getShopPage = async (req, res) => {
+    try {
+        const session = req.session.user_id
+        const userData = await users.findById({_id:session})
+        
+        
+
+        let price = req.query.value 
+        let Category = req.query.category || "All"
+        let Search = req.query.search || ""
+        Search = Search.trim()
+
+        const categoryData = await category.find({is_block : false},{name : 1, _id :0})
+        let cat = []
+        for(i = 0; i < categoryData.length ; i++){
+            cat[i] = categoryData[i].name
+        }
+
+        let sort;
+        Category === "All" ? Category = [...cat] : Category = req.query.category.split(',')
+        price === "High" ? sort = -1 : sort = 1
+
+        const productData = 
+        await products.aggregate([
+            {$match : {name : {$regex : '^'+Search, $options : 'i'},category : {$in : Category}}},
+            {$sort : {price : sort}}
+           
+        ])
+       
+
+        res.render('shop',{session,userData,categoryData,productData,price,Category,Search})
+
+       
+    } catch (error) {
+        console.log(error);
+    }
+}
+// --------------------------------------------------------------
+
+
 module.exports = {
     getHome,
     getLogin,
@@ -473,7 +517,8 @@ module.exports = {
     getProductPage,
     resendOtp,
     getProfile,
-    getMyOrders
+    getMyOrders,
+    getShopPage
 }
 
 

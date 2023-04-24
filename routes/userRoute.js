@@ -37,6 +37,7 @@ user_route.get('/product',userController.getProductPage)
 user_route.get('/resend-otp',userController.resendOtp)
 user_route.get('/profile',userController.getProfile)
 user_route.get('/myorders',userController.getMyOrders)
+user_route.get('/shop',auth.isLogin,userController.getShopPage)
 // cart Controller
 user_route.get('/cart',auth.isLogin,cartController.getCart)
 user_route.get('/checkout',auth.isLogin,cartController.getCheckout)
