@@ -1,62 +1,56 @@
-<%-include('../partials/userHeader.ejs')%>
-<form action="" method="post">
-<div class="colorlib-product">
-        <div class="container">
-            <div class="row row-pb-lg">
-                <div class="col-sm-10 offset-md-1">
-                    <div class="process-wrap">
-                        <div class="process text-center active">
-                            <p><span>01</span></p>
-                            <h3>Shopping Cart</h3>
-                        </div>
-                        <div class="process text-center active">
-                            <p><span>02</span></p>
-                            <h3>Checkout</h3>
-                        </div>
-                        <div class="process text-center">
-                            <p><span>03</span></p>
-                            <h3>Order Complete</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="product_count" style="display: flex;">
+
+    <a type="button" onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,)"
+
+      class="genric-btn primary-border small">-</a>
+
+    <!-- <input type="text" id="quantity" name="count" class="quantity form-control input-number" value="<%=value.quantity%>" min="0" max="100"> -->
+    <span>&nbsp;&nbsp; <span id="<%=value.productId._id%>">
+
+        <%=value.quantity%>
+      </span> &nbsp;&nbsp; </span>
+
+    <!-- <a href="#" class="genric-btn primary-border small">S</a> -->
+    <a type="button" onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,)"
+      class="genric-btn primary-border small">+</a>
+
+
+          </div>
+
+
+
+
+<script>
+    function changeQuantity(cartId, proId, count,) {
+      let quantity = parseInt(document.getElementById(proId).innerHTML)
+      let count1 = parseInt(count)
+
+      let price = document.getElementById('price').innerHTML
+      console.log(quantity, count, cartId, proId, price);
+      $.ajax({
+        url: '/cartqntyincrese',
+        data: {
+          cart: cartId,
+          product: proId,
+          count: count1,
+          quantity: quantity,
+
+        },
+
+        method: 'post',
+        success: (response) => {
+          if (response.remove) {
+            detelecartitem(proId)
+
+
+
+          } else {
             
-            <div class="row">
-               
+            document.getElementById(proId).innerHTML = quantity + count;
 
-                
-
-                <div class="col-lg-8">
-                    <h3>Billing Address</h3>
-                    <hr>
-                    <a href="/address" class="btn btn-primary ">Add Address</a>
-                    <br><br>
-                    <% if(typeof address !=="undefined" ){%>
-                        <div style="width:auto;height:auto" class="order_box">
-                            <%address.forEach((value,index)=>{%>
-                                <input class="form-check-input" name="address" type="radio" value="<%= value.name %> <%= value.address %>" id="flexCheckDefault" required> <br>
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    <%=value.name%> <br>
-                                    <%=value.address%> <br>
-                                    Ph : <%=value.mobile%>,
-                                    <%=value.email%> <br>
-                                    <%=value.pin %>
-                                </label>
-                                <br>
-                                <div style="display: flex;">
-                                    <div>
-                                        <a class="btn hero-btn" style="color: rgb(248, 246, 246);" href="/edit_address?id=<%=value._id%>">edit</a>
-                                    </div>
-                                    <div style="margin-left: 10px;">
-                                        <a class="btn btn-outline-primary" style="color: rgb(248, 246, 246);" href="/delete_address?id=<%=value._id%>">delete</a>
-                                    </div>
-                                </div>
-                                <hr>
-                            <% })%>
-                        </div>
-                    <% }%>
-                </div>
-                
+            document.getElementById("total").innerHTML = response.Total
+            document.getElementById("total2").innerHTML = response.Total
+          }
 
 
 
@@ -64,80 +58,107 @@
 
 
 
+        }
+
+      })
+
+    }
+
+  </script>
+
+  <script>
+
+    function detelecartitem(proId) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: "/delete_cartitem",
+            data: {
+
+              product: proId,
+            },
+            method: "post",
+            success: (response) => {
+              if ((response.remove = true)) {
+                location.reload();
+              }
+            },
+          });
+        }
+      });
+    }
+  </script>
 
 
+<script>
+const cartquantity = async(req,res,next)=>{
+    try{
+        let cartId = req.body.cart;
+         const proId = req.body.product;
+         let quantity = req.body.quantity;
+
+         let count = req.body.count; 
+         
+         if ((count == -1) && (quantity==1)){
+            res.json({remove:true})
 
 
-                <div class="col-lg-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="cart-detail">
-                                <h2>Cart Total</h2>
-                                <ul>
-                                    <li>
-                                        <span>Subtotal</span> <span><%=Total%></span>
-                                        <ul>
-                                            <li><span>1 x Product Name</span> <span>$00.00</span></li>
-                                            <li><span>1 x Product Name</span> <span>$00.00</span></li>
-                                        </ul>
-                                    </li>
-                                    <li><span>Shipping</span> <span>$0.00</span></li>
-                                    <li><span>Order Total</span> <span><%=Total%></span></li>
-                                </ul>
-                            </div>
-                        </div>
+              }else{
 
-                        <div class="w-100"></div>
-
-                        <div class="col-md-12">
-                            <div class="cart-detail">
-                                <h2>Payment Method</h2>
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="radio">
-                                            <label><input type="radio" name="optradio"> Direct Bank Tranfer</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="radio">
-                                            <label><input type="radio" name="optradio"> Check Payment</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="radio">
-                                            <label><input type="radio" name="payment" value="COD"> Cash On Delivery</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="checkbox">
-                                            <label><input type="checkbox" value="COD"> I have read and accept the terms and
-                                                conditions</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <p> <button type="submit" value="placeorder" class="btn btn-primary"></button></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-       
-        </div>
-    </form>
-   
-    </div>
-</form>
+    await cart.updateOne({user:req.session.user_id,"product.productId":proId},{$inc:{"product.$.quantity":count}});
+              }
+              next();
 
 
+    }catch(error){
+        console.log(error.message);
+    }
+}
 
-    <%-include('../partials/userFooter.ejs')%>
+
+const totalproductprice = async (req, res) => {
+    try {
+ 
+  const userd=await User.findOne({_id:req.session.user_id})
+
+  
+      let total = await cart.aggregate([
+        {
+          $match: {
+            user: userd._id,
+          },
+        },
+        {
+          $unwind: "$product",
+        },
+        {
+          $project: {
+            price: "$product.price",
+            quantity: "$product.quantity",
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: { $multiply: ["$price", "$quantity"] } },
+          },
+        },
+      ]);
+  
+      let Total = total[0].total;
+
+      res.json({ success: true, Total });
+    } catch (error) {
+      res.render("user/500");
+    }
+  };
+</script>

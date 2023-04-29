@@ -14,7 +14,7 @@ const session = require('express-session')
 const getProducts = async (req, res) => {
     try {
         const productsData = await products.find()
-        res.render('products',{message:productsData})
+        res.render('products', { message: productsData })
     } catch (error) {
         console.log(error)
     }
@@ -27,8 +27,8 @@ const getProducts = async (req, res) => {
 // ---------------------------------------------------------------------------------
 const getAddProducts = async (req, res) => {
     try {
-        const categoryData= await category.find({is_block:0})
-        res.render('add-products',{categoryData})
+        const categoryData = await category.find({ is_block: 0 })
+        res.render('add-products', { categoryData })
     } catch (error) {
         console.log(error)
     }
@@ -40,24 +40,30 @@ const getAddProducts = async (req, res) => {
 // ---------------------------------------------------------------------------------
 const addProduct = async (req, res) => {
     try {
-       
-        const img=[]
-        for(i=0; i<req. files.length; i++){
-            img[i]=req.files[i].filename
+
+        const img = []
+        for (i = 0; i < req.files.length; i++) {
+            img[i] = req.files[i].filename
         }
-       
-            const productData = new products({
-                name: req.body.name,
-                price: req.body.price,
-                category: req.body.category,
-                description: req.body.description,
-                image: img,
-                stock: req.body.stock,
-                status: req.body.status
-            })
-            const categoryDoc = await productData.save()
-            res.redirect('/admin/products')
         
+        let status;
+        if (req.body.stock <= 0) {
+            status = 'Out Of Stock'
+        }else{
+            status = 'In Stock'
+        }
+        const productData = new products({
+            name: req.body.name,
+            price: req.body.price,
+            category: req.body.category,
+            description: req.body.description,
+            image: img,
+            stock: req.body.stock,
+            status: status
+        })
+        const categoryDoc = await productData.save()
+        res.redirect('/admin/products')
+
     }
     catch (error) {
         console.log(error.message);
@@ -87,9 +93,9 @@ const editProduct = async (req, res) => {
         const id = req.query.id
         const productData = await products.findById({ _id: id })
         console.log(productData);
-        const categoryData = await category.find({is_block:0})
+        const categoryData = await category.find({ is_block: 0 })
         if (productData) {
-            res.render('edit-product', {productData,categoryData })
+            res.render('edit-product', { productData, categoryData })
         }
         else {
             res.redirect('/admin/products')
@@ -109,29 +115,37 @@ const editProduct = async (req, res) => {
 const postEditProduct = async (req, res) => {
     try {
         const id = req.body.id
-        if(req.file){
-            const newData = await products.updateMany({ _id: id },{$set:{name:req.body.name,
-                price:req.body.price,
-                category:req.body.category,
-                description:req.body.description, 
-                image: req.file.filename,
-                stock: req.body.stock,
-                status: req.body.status}})
-    
+        if (req.file) {
+            const newData = await products.updateMany({ _id: id }, {
+                $set: {
+                    name: req.body.name,
+                    price: req.body.price,
+                    category: req.body.category,
+                    description: req.body.description,
+                    image: req.file.filename,
+                    stock: req.body.stock,
+                    status: req.body.status
+                }
+            })
+
             res.redirect('/admin/products')
         }
-        else{
-            const newData = await products.updateMany({ _id: id },{$set:{name:req.body.name,
-                price:req.body.price,
-                category:req.body.category,
-                description:req.body.description, 
-                stock: req.body.stock,
-                status: req.body.status}})
-    
+        else {
+            const newData = await products.updateMany({ _id: id }, {
+                $set: {
+                    name: req.body.name,
+                    price: req.body.price,
+                    category: req.body.category,
+                    description: req.body.description,
+                    stock: req.body.stock,
+                    status: req.body.status
+                }
+            })
+
             res.redirect('/admin/products')
 
         }
-        
+
     } catch (error) {
         console.log(error)
     }
@@ -140,32 +154,32 @@ const postEditProduct = async (req, res) => {
 
 
 
-const deleteImage = async(req,res)=>{
+const deleteImage = async (req, res) => {
     try {
         console.log(req.body.position)
-        const position=req.body.position
-        const id =  req.body.id
+        const position = req.body.position
+        const id = req.body.id
 
-        const productImage =await products.findById(id)
+        const productImage = await products.findById(id)
 
-        const image=productImage.image[position]
-        const data =await products.updateOne({_id:id},{$pullAll:{image:[image]}})
+        const image = productImage.image[position]
+        const data = await products.updateOne({ _id: id }, { $pullAll: { image: [image] } })
 
-        if(data){
-            res.json({success:true})
-        }else{
+        if (data) {
+            res.json({ success: true })
+        } else {
             res.redirect('/admin/products')
         }
     } catch (error) {
 
         console.log(error.message);
-        
-    }
+
+    }
 }
 
 
 
-module.exports ={
+module.exports = {
     getProducts,
     getAddProducts,
     addProduct,

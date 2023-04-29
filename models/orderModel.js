@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
         required: true,
     },
     user: { type: String },
-    userId:{type: String},
+    userId: { type: String },
     paymentMethod: { type: String },
 
     product: [{
@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema({
     status: { type: String },
     paymentId: { type: String },
 },
-    {timestamps: true}
+    { timestamps: true }
 );
 
 module.exports = mongoose.model("order", orderSchema)

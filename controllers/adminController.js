@@ -1,6 +1,7 @@
 const users = require('../models/userModel')
 const category = require('../models/categoryModel')
 const order = require('../models/orderModel')
+const productModel = require('../models/productModel')
 
 
 const session = require('express-session')
@@ -251,24 +252,52 @@ const editOrder = async (req, res) => {
             const walletAmountUsed = orderData.wallet
             const userid = req.session.user_id
             const userData = await users.findById({ _id: userid })
-                       
+
             const newWallet = parseInt(userData.wallet + walletAmountUsed)
-            if(orderData.paymentMethod==='COD'){
+            if (orderData.paymentMethod === 'COD') {
                 await users.findByIdAndUpdate({ _id: userid }, { $set: { wallet: newWallet } })
-            }else{
+            } else {
                 await users.findByIdAndUpdate({ _id: userid }, { $set: { wallet: totalBillAmount } })
             }
             await order.updateOne({ _id: id }, { $set: { status: 'cancelled' } })
+
+            // to increase the stock
+            const product = orderData.product
+            for (let i = 0; i < product.length; i++) {
+                const productId = product[i].productId
+                const productData = await productModel.findById({_id: productId})
+                if(productData.stock === 0){
+                    await productModel.findByIdAndUpdate(productId, { $set: { status: 'In Stock' } })
+                }
+                const quantity = product[i].count
+                await productModel.findByIdAndUpdate(productId, { $inc: { stock: +quantity } })
+            }
+            // -----
+
             res.redirect('/admin/orders')
         }
 
         if (orderData.status === 'req-for-return') {
 
-            
+
             const userid = req.session.user_id
             await users.findByIdAndUpdate({ _id: userid }, { $set: { wallet: totalBillAmount } })
 
             await order.updateOne({ _id: id }, { $set: { status: 'returned' } })
+
+            // to increase the stock
+            const product = orderData.product
+            for (let i = 0; i < product.length; i++) {
+                const productId = product[i].productId
+                const productData = await productModel.findById({_id: productId})
+                if(productData.stock === 0){
+                    await productModel.findByIdAndUpdate(productId, { $set: { status: 'In Stock' } })
+                }
+                const quantity = product[i].count
+                await productModel.findByIdAndUpdate(productId, { $inc: { stock: +quantity } })
+                
+            }
+            // -----
             res.redirect('/admin/orders')
         }
 

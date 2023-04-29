@@ -25,9 +25,9 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
-                        <div class="product__details__pic__item">
-                            <img class="product__details__pic__item--large" src="/productimages/<%=product.image[0]%>"
-                                alt="">
+                        <div class="product__details__pic__item image-zoom-container">
+                            <img class="product__details__pic__item--large image-zoom"
+                                src="/productimages/<%=product.image[0]%>" alt="Product Image">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
                             <img data-imgbigurl="/productimages/<%=product.image[1]%>"
@@ -63,15 +63,16 @@
                         <p>Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Vestibulum ac diam sit amet quam
                             vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
                             quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
-                        <div class="product__details__quantity">
-                            <div class="quantity">
-                                <div class="pro-qty">
-                                    <input type="text" value="1">
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#" class="primary-btn">ADD TO CART</a>
-                        <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                        
+                        <a href='#' onclick="show('<%-product._id%>')" class="primary-btn">ADD TO CART</a>
+                        <a onclick="addtoWishlist('<%-product._id%>')" class="heart-icon"><span
+                                class="icon_heart_alt"></span></a>
+                                <% if (product.status === 'Out Of Stock') { %>
+                                    <p style="color: red;">OUT OF STOCK</p>
+                                  <% } %>
+                                  
+                                  
+                               
                         <ul>
                             <li><b>Availability</b> <span>In Stock</span></li>
                             <li><b>Shipping</b> <span>01 day shipping. <samp>Free pickup today</samp></span></li>
@@ -247,6 +248,99 @@
         </div>
     </section> -->
     <!-- Related Product Section End -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+    <script>
+        function show(id) {
+            $.ajax({
+                url: "/addToCart",
+                method: "post",
+                data: {
+                    id: id
+                },
+                success: (response) => {
+                    if (response.success) {
+                        swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: 'product added to cart',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }
+                },
+                error: (xhr) => {
+                    if (xhr.status === 401) {
+                        window.location.href = '/login';
+                    }
+                }
+            });
+        }
+
+        function addtoWishlist(id) {
+            console.log(id)
+            $.ajax({
+                url: '/addtowhishlist',
+                method: 'post',
+                data: {
+                    id: id
+                },
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'product added to wishlist',
+                            showConfirmButton: false,
+                            timer: 1000,
+
+                        })
+
+                    } else if (response.productExit) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Product already added to wishlist',
+                            showConfirmButton: false,
+                            timer: 1000
+
+                        })
+
+                    }
+                    else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Plz SignIn!',
+                            showConfirmButton: false,
+                            timer: 1000
+                        })
+
+                    }
+                }
+
+            })
+        }
+
+    </script>
+
+    <style>
+        .image-zoom-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .image-zoom {
+            display: block;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+
+        .image-zoom:hover {
+            transform: scale(1.3);
+            z-index: 1;
+        }
+    </style>
 
 
     <%- include('../partials/users/footer.ejs') %>

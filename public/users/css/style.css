@@ -954,7 +954,7 @@ ol {
 }
 
 .featured__item__pic__hover li:hover a i {
-	color: #f4e107;
+	color: #fdfdfd;
 	transform: rotate(360deg);
 }
 
@@ -965,8 +965,8 @@ ol {
 	width: 40px;
 	line-height: 40px;
 	text-align: center;
-	border: 1px solid #7fad39;
-	background: #7fad39;
+	border: 1px solid #fdfdfd;
+	background: #fdfdfd;
 	display: block;
 	border-radius: 50%;
 	-webkit-transition: all, 0.5s;
@@ -984,6 +984,7 @@ ol {
 	-ms-transition: all, 0.3s;
 	-o-transition: all, 0.3s;
 	transition: all, 0.3s;
+	color: black;
 }
 
 .featured__item__text {
@@ -1619,6 +1620,10 @@ ol {
 	list-style: none;
 	display: inline-block;
 	margin-right: 6px;
+}
+
+.product__item__pic__hover li a i {
+	color: black;
 }
 
 .product__item__pic__hover li:last-child {

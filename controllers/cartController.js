@@ -75,9 +75,11 @@ const getCart = async (req, res) => {
 
             if (cartData.products.length > 0) {
                 const products = cartData.products;
+                console.log(products);
                 const total = await cart.aggregate([{ $match: { userId: userData._id } }, { $unwind: "$products" }, { $project: { productPrice: "$products.productPrice", count: "$products.count" } }, { $group: { _id: null, total: { $sum: { $multiply: ["$productPrice", "$count"] } } } }]);
-                
+                console.log(total);
                 const Total = total[0].total;
+                console.log(Total);
                 const userCartId = userData._id
                 res.render("cart", { userData, session, Total, userCartId, products });
             }

@@ -466,7 +466,6 @@ const getShopPage = async (req, res) => {
         const session = req.session.user_id
         const userData = await users.findById({_id:session})
         
-        
 
         let price = req.query.value 
         let Category = req.query.category || "All"
