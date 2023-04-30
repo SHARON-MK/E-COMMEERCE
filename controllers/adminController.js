@@ -15,7 +15,66 @@ const { ClientSession } = require('mongodb')
 // ---------------------------------------------------------------------------------
 const getAdminPanel = async (req, res) => {
     try {
-        res.render('admin-panel')
+        const total = await order.aggregate([
+            {
+              $match: {
+                status: { $nin: ["cancelled", "returned"] } // Exclude "cancelled" and "returned" statuses
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$paid" }
+              }
+            }
+          ]);
+          
+        const user_count = await users.find({is_admin:0}).count();
+        const order_count = await order.find({}).count();
+        const product_count = await productModel.find({}).count();
+
+        const payment = await order.aggregate([{$group:{_id:"$paymentMethod",totalPayment:{$count:{}}}}])
+
+        let sales = [];
+            var date = new Date();
+            var year = date.getFullYear();
+            var currentyear = new Date(year, 0, 1);
+            let salesByYear = await order.aggregate([
+                {
+                  $match: {
+                    createdAt: { $gte: currentyear },
+                    status: { $nin: ["cancelled", "returned"] } // Exclude "cancelled" and "returned" statuses
+                  }
+                },
+                {
+                  $group: {
+                    _id: { $dateToString: { format: "%m", date: "$createdAt" } },
+                    total: { $sum: "$paid" }
+                  }
+                },
+                { $sort: { _id: 1 } }
+              ]);
+              
+            for(let i=1;i<=12;i++){
+                let result = true;
+                for(let k=0;k<salesByYear.length;k++){
+                    result = false;
+                    if(salesByYear[k]._id==i){
+                        sales.push(salesByYear[k])
+                        break;
+                    }else{
+                        result = true
+                    }
+                }
+                if(result) sales.push({_id:i,total:0});
+            }
+            let salesData = [];
+            for(let i=0;i<sales.length;i++){
+                salesData.push(sales[i].total);
+            }
+            console.log(salesData);
+       
+        res.render('admin-panel',{total,user_count,order_count,product_count,payment,month:salesData})
     } catch (error) {
         console.log(error)
     }

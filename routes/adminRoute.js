@@ -4,6 +4,7 @@ const config = require('../config/config')
 const adminController = require('../controllers/adminController')
 const productsController = require('../controllers//productController')
 const couponController = require('../controllers/couponController')
+const bannerController = require('../controllers/bannerController')
 const session = require('express-session')
 const auth = require('../middlewares/authAdmin')
 
@@ -63,15 +64,24 @@ admin_route.get('/coupons/add',couponController.getCouponAddPage)
 admin_route.get('/coupons/delete',couponController.deleteCoupon)
 admin_route.get('/coupons/edit',couponController.editCoupon)
 
+// Banner controller
+admin_route.get('/banners',bannerController.getBannerPage)
+admin_route.get('/banners/add',bannerController.getBannerAddPage)
+admin_route.get('/banners/statuschange',bannerController.statusChange)
+
+
+
 
 
 
 
 
 // POST REQUESTS
+// admin controller
 admin_route.post('/login',adminController.postLogin)
 admin_route.post('/category/add',adminController.addCategory)
 
+// product controller
 admin_route.post('/products/add',upload.array('image'),productsController.addProduct)
 admin_route.post('/products/edit',upload.array('image'),productsController.postEditProduct)
 admin_route.post('/delete_image',productsController.deleteImage)
@@ -79,6 +89,9 @@ admin_route.post('/delete_image',productsController.deleteImage)
 // coupon controller
 admin_route.post('/coupons/add',couponController.postAddCoupon)
 admin_route.post('/coupons/edit',couponController.postEditCoupon)
+
+// banner controller
+admin_route.post('/banners/add',upload.single('image'),bannerController.addBanner)
 
 
 

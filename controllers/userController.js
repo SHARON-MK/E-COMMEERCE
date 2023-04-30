@@ -3,6 +3,7 @@ const address = require('../models/addressModel')
 const products = require('../models/productModel')
 const orders = require('../models/orderModel')
 const category = require('../models/categoryModel')
+const banners = require('../models/bannerModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
 const session = require('express-session');
@@ -120,12 +121,13 @@ const getHome = async function (req, res) {
     const session = req.session.user_id
     const userData = await users.findOne({ _id: session })
     const productData = await products.find()
+    const bannerData = await banners.find({status:'true'})
     try {
         if (session) {
-            res.render('home', { userData, session, productData });
+            res.render('home', { userData, session, productData,bannerData });
         }
         else {
-            res.render('home', { userData, session, productData })
+            res.render('home', { userData, session, productData,bannerData})
         }
     } catch (error) {
         console.log(error);
