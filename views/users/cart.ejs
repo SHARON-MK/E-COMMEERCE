@@ -46,28 +46,35 @@
                                             </h5>
                                         </td>
                                         <td class="shoping__cart__price">
-                                            <%=value.productId.price%>
+                                            <h5 id="price">
+                                                <%=value.productId.price%>
+                                            </h5>
                                         </td>
                                         <td class="shoping__cart__quantity">
                                             <div class="quantity">
                                                 <div class="pro-qty">
-                                                    <a
-                                                        onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1)">
+
+                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1)">
                                                         <span class="dec qtybtn change-qty">-</span>
                                                     </a>
-                                                    <span></span>
-                                                    <input type="text" id="<%=value.productId._id%>"
-                                                        value="<%=value.count%>">
-                                                    <a
-                                                        onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1)">
-                                                        <span class="inc qtybtn change-qty">+</span>
+
+                                                   
+
+                                                    <span>&nbsp;&nbsp; <span id="<%=value.productId._id%>">
+                                                        <%=value.count%>
+                                                      </span> &nbsp;&nbsp; </span>
+                                                   
+
+                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1)">
+                                                    <span class="inc qtybtn change-qty">+</span>
                                                     </a>
-                                                    <input type="hidden" class="pro-id"
-                                                        value="<%=value.productId._id%>">
+
+                                                    <input type="hidden" class="pro-id" value="<%=value.productId._id%>">
+
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="shoping__cart__total">
+                                        <td class="shoping__cart__total" id="total2">
                                             <%=value.productId.price*value.count%>
                                         </td>
                                         <td class="shoping__cart__item__close">
@@ -105,10 +112,10 @@
                     <div class="shoping__checkout">
                         <h5>Cart Total</h5>
                         <ul>
-                            <li>Subtotal <span>
+                            <li>Subtotal <span id="total1" >
                                     <%=Total%>
                                 </span></li>
-                            <li>Total <span>
+                            <li>Total <span id="total">
                                     <%=Total%>
                                 </span></li>
                         </ul>
@@ -121,14 +128,13 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
-
-
-<script>
+    <script>
         function changeQuantity(cartId, proId, count,) {
             let quantity = parseInt(document.getElementById(proId).innerHTML)
+           
             let count1 = parseInt(count)
             let price = document.getElementById('price').innerHTML
-            console.log(quantity, count, cartId, proId, price);
+           
             $.ajax({
                 url: '/cartqntyincrese',
                 data: {
@@ -143,6 +149,7 @@
                         detelecartitem(proId)
                     } else {
                         document.getElementById(proId).innerHTML = quantity + count;
+                        document.getElementById("total1").innerHTML = response.Total
                         document.getElementById("total").innerHTML = response.Total
                         document.getElementById("total2").innerHTML = response.Total
                     }
@@ -166,7 +173,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "/delete_cartitem",
+                        url: "/removeproduct",
                         data: {
 
                             product: proId,

@@ -1,26 +1,177 @@
-<div class="product_count" style="display: flex;">
+<%- include('../users/layouts/user_header.ejs')%>
 
-    <a type="button" onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,)"
+  <main>
+    <!-- Hero Area Start-->
+    <div class="slider-area ">
+      <div class="single-slider slider-height2 d-flex align-items-center">
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="hero-cap text-center">
+                <h2>Cart List</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--================Cart Area =================-->
+    <section class="cart_area section_padding">
+      <div class="container">
+        <div class="cart_inner">
+          <div class="table-responsive">
 
-      class="genric-btn primary-border small">-</a>
 
-    <!-- <input type="text" id="quantity" name="count" class="quantity form-control input-number" value="<%=value.quantity%>" min="0" max="100"> -->
-    <span>&nbsp;&nbsp; <span id="<%=value.productId._id%>">
-
-        <%=value.quantity%>
-      </span> &nbsp;&nbsp; </span>
-
-    <!-- <a href="#" class="genric-btn primary-border small">S</a> -->
-    <a type="button" onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,)"
-      class="genric-btn primary-border small">+</a>
-
-
-          </div>
+            <% if(typeof products !=="undefined" ){ %>
 
 
 
+              <table class="table">
 
-<script>
+                <thead>
+                  <tr>
+
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+
+                    <th scope="col">Price</th>
+                    <th scope="col">Total Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%products.forEach((value,index)=>{%>
+
+
+
+
+                    <tr>
+                      <!-- <td>
+                      <h5><%= index+1 %></h5>
+                    </td> -->
+
+
+                      <td>
+                        <div class="media">
+                          <div class="d-flex">
+                            <img src="../admin/assets/product_images/<%= value.productId.image[0]%>" alt="">
+                          </div>
+                          <div class="media-body">
+                            <p>
+                              <%= value.productId.name%>
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <!-- <div class="product_count">
+                       <button style="width: 30px; height: 30px;">hou</button>
+                        <input style="width: 40px; height: 30px;" type="text" value="1" min="0" max="10">
+                       <button style="width: 30px; height: 30px;" >hi</button>
+                      </div> -->
+
+                        <div class="product_count" style="display: flex;">
+                          <a type="button" onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,)"
+                            class="genric-btn primary-border small">-</a>
+                          <!-- <input type="text" id="quantity" name="count" class="quantity form-control input-number" value="<%=value.quantity%>" min="0" max="100"> -->
+                          <span>&nbsp;&nbsp; <span id="<%=value.productId._id%>">
+                              <%=value.quantity%>
+                            </span> &nbsp;&nbsp; </span>
+                          <!-- <a href="#" class="genric-btn primary-border small">S</a> -->
+                          <a type="button" onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,)"
+                            class="genric-btn primary-border small">+</a>
+
+
+                        </div>
+                      </td>
+
+                      <td>
+                        <h5 id="price">
+                          <%=value.productId.price%>
+                        </h5>
+                      </td>
+                      <td>
+                        <span id="qnty"></span>
+                      </td>
+                      <td>
+                        <a onclick="detelecartitem( '<%= value.productId._id%>')"
+                          class="genric-btn danger-border small">Remove</a>
+
+                      </td>
+                    </tr>
+                    <%})%>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <h5>Subtotal</h5>
+                        </td>
+                        <td>
+                          <h5 id="total">
+                            <%=Total%>
+                          </h5>
+                        </td>
+                      </tr>
+                      <tr class="shipping_area">
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <h5>Shipping</h5>
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+                          <div class="shipping_box">
+                            <ul class="list">
+                              <li>
+                                Flat Rate: $5.00
+                                <input type="radio" aria-label="Radio button for following text input">
+                              </li>
+                              <li>
+                                Free Shipping
+                                <input type="radio" aria-label="Radio button for following text input">
+                              </li>
+                              <li>
+                                Flat Rate: $10.00
+                                <input type="radio" aria-label="Radio button for following text input">
+                              </li>
+                              <li class="active">
+                                Local Delivery: $2.00
+                                <input type="radio" aria-label="Radio button for following text input">
+                              </li>
+                            </ul>
+
+
+                          </div>
+                        </td>
+                      </tr>
+                </tbody>
+              </table>
+              <div class="checkout_btn_inner float-right">
+                <a class="btn_1 checkout_btn_1" href="./checkout">Proceed to checkout</a>
+
+                <a class="btn_1" href="./shop">Continue Shopping</a>
+
+                <% }else{ %>
+                  <h1>Your Cart empty</h1>
+                  <div class="checkout_btn_inner float-right">
+
+                    <a class="btn_1" href="./shop">Go To Shop</a>
+                  </div>
+                  <% } %>
+              </div>
+          </div>
+        </div>
+    </section>
+    <!--================End Cart Area =================-->
+  </main>
+
+  <script>
     function changeQuantity(cartId, proId, count,) {
       let quantity = parseInt(document.getElementById(proId).innerHTML)
       let count1 = parseInt(count)
@@ -45,7 +196,7 @@
 
 
           } else {
-            
+
             document.getElementById(proId).innerHTML = quantity + count;
 
             document.getElementById("total").innerHTML = response.Total
@@ -98,9 +249,35 @@
     }
   </script>
 
+  <%- include('../users/layouts/user_footer.ejs')%>
 
-<script>
-const cartquantity = async(req,res,next)=>{
+    <script>
+
+      const cartSchema = new mongoose.Schema({
+        user: {
+          type: mongoose.Types.ObjectId,
+          ref: 'user',
+          required: true
+        },
+        product: [{
+          productId: {
+            type: mongoose.Types.ObjectId,
+            ref: 'product',
+            require: true
+          },
+          quantity: {
+            type: Number,
+            default: 1
+          },
+          price: {
+            type: Number,
+            default: 0
+          }
+
+        }]
+
+      })
+      const cartquantity = async(req,res,next)=>{
     try{
         let cartId = req.body.cart;
          const proId = req.body.product;
@@ -115,6 +292,12 @@ const cartquantity = async(req,res,next)=>{
               }else{
 
     await cart.updateOne({user:req.session.user_id,"product.productId":proId},{$inc:{"product.$.quantity":count}});
+
+
+        
+        
+      
+
               }
               next();
 
@@ -125,10 +308,17 @@ const cartquantity = async(req,res,next)=>{
 }
 
 
+
+
+
 const totalproductprice = async (req, res) => {
     try {
- 
-  const userd=await User.findOne({_id:req.session.user_id})
+
+
+    
+
+
+      const userd=await User.findOne({_id:req.session.user_id})
 
   
       let total = await cart.aggregate([
@@ -161,4 +351,5 @@ const totalproductprice = async (req, res) => {
       res.render("user/500");
     }
   };
-</script>
+      
+    </script>

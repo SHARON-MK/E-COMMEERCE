@@ -42,7 +42,11 @@ user_route.get('/shop',auth.isLogin,userController.getShopPage)
 user_route.get('/cart',auth.isLogin,cartController.getCart)
 user_route.get('/checkout',auth.isLogin,cartController.getCheckout)
 user_route.get('/add-address',auth.isLogin,cartController.getAddAddress)
+
 user_route.get('/removeproduct',auth.isLogin,cartController.removeProduct)
+user_route.post('/removeproduct',auth.isLogin,cartController.postremoveProduct)
+
+user_route.post('/cartqntyincrese',auth.isLogin,cartController.cartQuantityIncrese,cartController.totalproductprice)
 // wishlist Controller
 user_route.get('/wishlist',auth.isLogin,wishlistController.getWishlist)
 user_route.get('/wishlistitemdelete',auth.isLogin,wishlistController.removeProduct)
