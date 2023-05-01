@@ -1,0 +1,71 @@
+<%- include('../partials/admin/header.ejs') %>
+
+  <div class="clearfix"></div>
+
+  <div class="content-wrapper">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-12">
+
+            <form action=""  style="margin-top: 10px;">
+                <label for="">From</label>
+                <input type="date" name="from"style="background-color: rgb(11,82,136); color: silver;">
+                <label for="">To</label>
+                <input type="date" name="to"  style="background-color: rgb(11,82,136); color: silver;">
+                <input type="submit" value="Filter" style="background-color: rgb(11,82,136); color: silver;">
+            </form>
+            <a href="/admin/salesreport/download?from=<%=from%>&&to=<%=to%>"><button style="background-color: rgb(11,82,136); color: silver; margin-top: 8px;">Download</button></a>
+
+          <div class="card" style="margin-top: 25px;">
+            
+            <div class="card-body">
+              <h5 class="card-title">Sales Report</h5>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Cus_Name</th>
+                      <th scope="col">Order Date</th>
+                      <th scope="col">Method</th>
+                      <th scope="col">Bill_Amount</th>
+                      <th scope="col">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (message.length> 0) { %>
+                      <% for (let i=0; i < message.length; i++) { %>
+                        <tr>
+                          <th scope="row">
+                            <%= i+1 %>
+                          </th>
+                          <td>
+                            <%= message[i].user %>
+                          </td>
+                          <td>
+
+                            <%= message[i].date.toISOString().substring(0,10) %>
+                          </td>
+                          <td>
+                            <%= message[i].paymentMethod %>
+                          </td>
+                          <td>
+                            <%= message[i].totalAmount %>
+                          </td>
+                          <td>
+                            <%= message[i].status %>
+                          </td>
+                        </tr>
+                        <% } %>
+                          <% } else { %>
+                            <tr>
+                              <td colspan="3">Orders not found</td>
+                            </tr>
+                            <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!--End Row-->

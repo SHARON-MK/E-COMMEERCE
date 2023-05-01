@@ -11,70 +11,72 @@ const { ClientSession } = require('mongodb')
 
 
 
+
+
 // GET ADMIN PANEL - get /admin
 // ---------------------------------------------------------------------------------
 const getAdminPanel = async (req, res) => {
     try {
         const total = await order.aggregate([
             {
-              $match: {
-                status: { $nin: ["cancelled", "returned"] } // Exclude "cancelled" and "returned" statuses
-              }
+                $match: {
+                    status: { $nin: ["cancelled", "returned"] } // Exclude "cancelled" and "returned" statuses
+                }
             },
             {
-              $group: {
-                _id: null,
-                total: { $sum: "$paid" }
-              }
+                $group: {
+                    _id: null,
+                    total: { $sum: "$paid" }
+                }
             }
-          ]);
-          
-        const user_count = await users.find({is_admin:0}).count();
+        ]);
+
+        const user_count = await users.find({ is_admin: 0 }).count();
         const order_count = await order.find({}).count();
         const product_count = await productModel.find({}).count();
 
-        const payment = await order.aggregate([{$group:{_id:"$paymentMethod",totalPayment:{$count:{}}}}])
+        const payment = await order.aggregate([{ $group: { _id: "$paymentMethod", totalPayment: { $count: {} } } }])
 
         let sales = [];
-            var date = new Date();
-            var year = date.getFullYear();
-            var currentyear = new Date(year, 0, 1);
-            let salesByYear = await order.aggregate([
-                {
-                  $match: {
+        var date = new Date();
+        var year = date.getFullYear();
+        var currentyear = new Date(year, 0, 1);
+        let salesByYear = await order.aggregate([
+            {
+                $match: {
                     createdAt: { $gte: currentyear },
                     status: { $nin: ["cancelled", "returned"] } // Exclude "cancelled" and "returned" statuses
-                  }
-                },
-                {
-                  $group: {
+                }
+            },
+            {
+                $group: {
                     _id: { $dateToString: { format: "%m", date: "$createdAt" } },
                     total: { $sum: "$paid" }
-                  }
-                },
-                { $sort: { _id: 1 } }
-              ]);
-              
-            for(let i=1;i<=12;i++){
-                let result = true;
-                for(let k=0;k<salesByYear.length;k++){
-                    result = false;
-                    if(salesByYear[k]._id==i){
-                        sales.push(salesByYear[k])
-                        break;
-                    }else{
-                        result = true
-                    }
                 }
-                if(result) sales.push({_id:i,total:0});
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        for (let i = 1; i <= 12; i++) {
+            let result = true;
+            for (let k = 0; k < salesByYear.length; k++) {
+                result = false;
+                if (salesByYear[k]._id == i) {
+                    sales.push(salesByYear[k])
+                    break;
+                } else {
+                    result = true
+                }
             }
-            let salesData = [];
-            for(let i=0;i<sales.length;i++){
-                salesData.push(sales[i].total);
-            }
-            console.log(salesData);
-       
-        res.render('admin-panel',{total,user_count,order_count,product_count,payment,month:salesData})
+            if (result) sales.push({ _id: i, total: 0 });
+        }
+        let salesData = [];
+        for (let i = 0; i < sales.length; i++) {
+            salesData.push(sales[i].total);
+        }
+        console.log(salesData);
+
+        res.render('admin-panel', { total, user_count, order_count, product_count, payment, month: salesData })
     } catch (error) {
         console.log(error)
     }
@@ -324,8 +326,8 @@ const editOrder = async (req, res) => {
             const product = orderData.product
             for (let i = 0; i < product.length; i++) {
                 const productId = product[i].productId
-                const productData = await productModel.findById({_id: productId})
-                if(productData.stock === 0){
+                const productData = await productModel.findById({ _id: productId })
+                if (productData.stock === 0) {
                     await productModel.findByIdAndUpdate(productId, { $set: { status: 'In Stock' } })
                 }
                 const quantity = product[i].count
@@ -348,13 +350,13 @@ const editOrder = async (req, res) => {
             const product = orderData.product
             for (let i = 0; i < product.length; i++) {
                 const productId = product[i].productId
-                const productData = await productModel.findById({_id: productId})
-                if(productData.stock === 0){
+                const productData = await productModel.findById({ _id: productId })
+                if (productData.stock === 0) {
                     await productModel.findByIdAndUpdate(productId, { $set: { status: 'In Stock' } })
                 }
                 const quantity = product[i].count
                 await productModel.findByIdAndUpdate(productId, { $inc: { stock: +quantity } })
-                
+
             }
             // -----
             res.redirect('/admin/orders')
@@ -366,6 +368,100 @@ const editOrder = async (req, res) => {
 }
 // ---------------------------------------------------------------------------------
 
+
+// get sales report page with filter also
+// ---------------------------------------------------------------------------------
+const moment = require("moment-timezone");
+
+const getSalesReport = async (req, res) => {
+    try {
+        let from = req.query.from ? moment.utc(req.query.from) : "ALL";
+        let to = req.query.to ? moment.utc(req.query.to) : "ALL";
+
+        if (from !== "ALL" && to !== "ALL") {
+            const orderdetails = await order.aggregate([
+                {
+                    $match: {
+                        date: {
+                            $gte: new Date(from),
+                            $lte: new Date(to.endOf("day"))
+                        },
+                        status: {
+                            $nin: ["cancelled", "returned"]
+                        }
+                    }
+                }
+            ]);
+            req.session.Orderdtls = orderdetails
+            res.render("sales-report", { message: orderdetails, from, to });
+        } else {
+            const orderdetails = await order.find({
+                status: { $nin: ["cancelled", "returned"] }
+            });
+            console.log(orderdetails);
+            req.session.Orderdtls = orderdetails
+            res.render("sales-report", { message: orderdetails, from, to });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// ---------------------------------------------------------------------------------
+
+
+
+// download sales report
+// ---------------------------------------------------------------------------------
+const ejs = require('ejs')
+const pdf = require('html-pdf')
+const fs = require('fs')
+const path = require('path')
+
+const downloadSalesReport = async (req, res) => {
+    try {
+        const from = req.query.from
+        const to = req.query.to
+console.log('1');
+        // const orderdetails = await order.find({ status: { $ne: "cancelled" } }).populate("product.productId").sort({ Date: -1 })
+console.log('2');
+        // const products = orderdetails.product
+console.log('3');
+
+        const data = {
+            report: req.session.Orderdtls,
+            // product: products
+        }
+
+        const filepath = path.resolve(__dirname, '../views/admin/salesreporttopdf.ejs')
+        const htmlstring = fs.readFileSync(filepath).toString()
+
+        let option = {
+            format: "A3"
+        }
+        const ejsData = ejs.render(htmlstring, data)
+        pdf.create(ejsData, option).toFile('salesReport.pdf', (err, response) => {
+            if (err) console.log(err);
+
+            const filepath = path.resolve(__dirname, '../salesReport.pdf')
+            fs.readFile(filepath, (err, file) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send('could not download file')
+                }
+                res.setHeader('Content-Type', 'application/pdf')
+                res.setHeader('Content-Disposition', 'attatchment;filename="Sales Report.pdf"')
+
+                res.send(file)
+
+            })
+        })
+    } catch (error) {
+
+        console.log(error.message);
+
+    }
+}
 
 
 
@@ -384,5 +480,7 @@ module.exports = {
     unBlockCategory,
     blockUser,
     getOrders,
-    editOrder
+    editOrder,
+    getSalesReport,
+    downloadSalesReport
 }
