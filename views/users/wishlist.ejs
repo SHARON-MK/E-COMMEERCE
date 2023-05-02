@@ -27,41 +27,45 @@
                     <div class="shoping__cart__table">
                         <table>
                             <thead>
-                                    <tr>
-                                        <th class="shoping__product">Books</th>
-                                        <th>Rate</th>
-                                        <th></th>
-                                    </tr>
+                                <tr>
+                                    <th class="shoping__product">Books</th>
+                                    <th>Rate</th>
+                                    <th></th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <% products.forEach((value,index)=>{%>
-                                <tr>
-                                    <td class="shoping__cart__item">
-                                        <img src="../productimages/<%=value.productId.image%>" width="80px" height="80px" alt="">
-                                        <h5>
-                                            <%=value.productId.name%>
-                                        </h5>
-                                    </td>
-                                    <td class="shoping__cart__price">
-                                        <%=value.productId.price%>
-                                    </td>
-                                    <td class="shoping__cart__quantity">
-                                        <div class="quantity">
-                                            <div >
-                                            <button class="primary-btn" onclick="wishToCart('<%=value.productId._id%>')" >ADD TO CART</button>
+                                    <tr>
+                                        <td class="shoping__cart__item">
+                                            <img src="../productimages/<%=value.productId.image%>" width="80px"
+                                                height="80px" alt="">
+                                            <h5>
+                                                <%=value.productId.name%>
+                                            </h5>
+                                        </td>
+                                        <td class="shoping__cart__price">
+                                            <%=value.productId.price%>
+                                        </td>
+                                        <td class="shoping__cart__quantity">
+                                            <div class="quantity">
+                                                <div>
+                                                    <button class="primary-btn"
+                                                        onclick="wishToCart('<%=value.productId._id%>')">ADD TO
+                                                        CART</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="shoping__cart__item__close">
-                                        <div >
-                                            <div >
-                                               <a href="/wishlistitemdelete?id=<%=value.productId._id%>"><span class="icon_close" style="color: red;"></span></a> 
+                                        </td>
+                                        <td class="shoping__cart__item__close">
+                                            <div>
+                                                <div>
+                                                    <a href="/wishlistitemdelete?id=<%=value.productId._id%>"><span
+                                                            class="icon_close" style="color: red;"></span></a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                   
-                                </tr>
-                                <%})%>
+                                        </td>
+
+                                    </tr>
+                                    <%})%>
 
                             </tbody>
                         </table>
@@ -80,22 +84,36 @@
     <!-- Shoping Cart Section End -->
 
     <script>
-        function wishToCart(id){
-          console.log(id)
-               $.ajax({
-                  url:'/whishToCart',
-                  method:'post',
-                  data:{
-                     id:id
-                  },
-                  success:(response)=>{
-                         if(response.success){         
-                             location.href="/cart"
-                         }
-                     }
-         
-               })
-            }
-      </script>
+        function wishToCart(id) {
+            console.log(id)
+            $.ajax({
+                url: '/whishToCart',
+                method: 'post',
+                data: {
+                    id: id
+                },
+                success: (response) => {
+                    if (response.success) {
+                        location.href = "/cart"
+                    }
+                },
+                error: (xhr) => {
+                    if (xhr.status === 401) {
+                        window.location.href = '/login';
+                    } else if (xhr.status === 400) {
+                        const response = xhr.responseJSON;
+                        swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                }
+
+            })
+        }
+    </script>
 
     <%- include('../partials/users/footer.ejs') %>

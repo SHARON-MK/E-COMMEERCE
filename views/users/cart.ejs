@@ -36,7 +36,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% products.forEach((value,index)=>{%>
+                                <% for(let index=0; index<products.length; index++) { %>
+                                    <% let value = products[index]; %>
                                     <tr>
                                         <td class="shoping__cart__item">
                                             <img src="../productimages/<%=value.productId.image%>" width="80px"
@@ -45,36 +46,26 @@
                                                 <%=value.productId.name%>
                                             </h5>
                                         </td>
-                                        <td class="shoping__cart__price">
-                                            <h5 id="price">
+                                        <td class="shoping__cart__price" id="<%=value.productId.name%>">                                         
                                                 <%=value.productId.price%>
-                                            </h5>
                                         </td>
                                         <td class="shoping__cart__quantity">
                                             <div class="quantity">
                                                 <div class="pro-qty">
-
-                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1)">
+                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,'<%=index%>','<%=value.productId.name%>')">
                                                         <span class="dec qtybtn change-qty">-</span>
                                                     </a>
-
-                                                   
-
                                                     <span>&nbsp;&nbsp; <span id="<%=value.productId._id%>">
                                                         <%=value.count%>
-                                                      </span> &nbsp;&nbsp; </span>
-                                                   
-
-                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1)">
-                                                    <span class="inc qtybtn change-qty">+</span>
+                                                    </span> &nbsp;&nbsp; </span>
+                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,'<%=index%>','<%=value.productId.name%>')">
+                                                        <span class="inc qtybtn change-qty">+</span>
                                                     </a>
-
                                                     <input type="hidden" class="pro-id" value="<%=value.productId._id%>">
-
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="shoping__cart__total" id="total2">
+                                        <td class="shoping__cart__total" id="<%=index%>">
                                             <%=value.productId.price*value.count%>
                                         </td>
                                         <td class="shoping__cart__item__close">
@@ -82,9 +73,9 @@
                                                     class="icon_close" style="color: red;"></span></a>
                                         </td>
                                     </tr>
-                                    <%})%>
-
+                                <% } %>
                             </tbody>
+                            
                         </table>
                     </div>
                 </div>
@@ -129,11 +120,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
     <script>
-        function changeQuantity(cartId, proId, count,) {
+        function changeQuantity(cartId, proId, count,index,price) {
             let quantity = parseInt(document.getElementById(proId).innerHTML)
-           
+            let Index = parseInt(index)
             let count1 = parseInt(count)
-            let price = document.getElementById('price').innerHTML
+            let Price = document.getElementById(price).innerHTML
            
             $.ajax({
                 url: '/cartqntyincrese',
@@ -143,7 +134,7 @@
                     count: count1,
                     quantity: quantity,
                 },
-                method: 'post',
+                method: 'patch',
                 success: (response) => {
                     if (response.remove) {
                         detelecartitem(proId)
@@ -151,7 +142,7 @@
                         document.getElementById(proId).innerHTML = quantity + count;
                         document.getElementById("total1").innerHTML = response.Total
                         document.getElementById("total").innerHTML = response.Total
-                        document.getElementById("total2").innerHTML = response.Total
+                        document.getElementById(Index).innerHTML = Price * (quantity + count1)
                     }
                 }
             })
@@ -178,7 +169,7 @@
 
                             product: proId,
                         },
-                        method: "post",
+                        method: "delete",
                         success: (response) => {
                             if ((response.remove = true)) {
                                 location.reload();

@@ -12,44 +12,50 @@ const addToCart = async (req, res) => {
         const productId = req.body.id;
         const productData = await product.findById({ _id: productId });
 
+        const productStock = productData.stock
+        if(productStock<1){
+            return res.status(400).json({ success: false, message: 'Out of stock, keep it added in wishlist' });
+        }else{
 
-        if (req.session.user_id) {
-            const userid = req.session.user_id;
-            const userData = await users.findById({ _id: userid });
-            const cartData = await cart.findOne({ userId: userid })
-
-            if (cartData) {
-                const productExist = cartData.products.findIndex((product) => product.productId == productId)
-                if (productExist != -1) {
-                    await cart.updateOne({ userId: userid, "products.productId": productId }, { $inc: { "products.$.count": 1 } });
-                    res.json({ success: true });
-                } else {
-                    await cart.findOneAndUpdate({ userId: req.session.user_id }, { $push: { products: { productId: productId, productPrice: productData.price } } })
-                    res.json({ success: true });
-                }
-
-
-            } else {
-                const Cart = new cart({
-                    userId: userData._id,
-                    userName: userData.name,
-                    products: [{
-                        productId: productId,
-                        productPrice: productData.price
-                    }]
-
-                });
-                const cartData = await Cart.save();
+            if (req.session.user_id) {
+                const userid = req.session.user_id;
+                const userData = await users.findById({ _id: userid });
+                const cartData = await cart.findOne({ userId: userid })
+    
                 if (cartData) {
-                    res.json({ success: true })
+                    const productExist = cartData.products.findIndex((product) => product.productId == productId)
+                    if (productExist != -1) {
+                        await cart.updateOne({ userId: userid, "products.productId": productId }, { $inc: { "products.$.count": 1 } });
+                        res.json({ success: true });
+                    } else {
+                        await cart.findOneAndUpdate({ userId: req.session.user_id }, { $push: { products: { productId: productId, productPrice: productData.price } } })
+                        res.json({ success: true });
+                    }
+    
+    
                 } else {
-                    res.redirect('/home')
+                    const Cart = new cart({
+                        userId: userData._id,
+                        userName: userData.name,
+                        products: [{
+                            productId: productId,
+                            productPrice: productData.price
+                        }]
+    
+                    });
+                    const cartData = await Cart.save();
+                    if (cartData) {
+                        res.json({ success: true })
+                    } else {
+                        res.redirect('/home')
+                    }
                 }
+    
+            } else {
+                res.status(401).json({ success: false, message: 'Unauthorized' });
+                return;
             }
 
-        } else {
-            res.status(401).json({ success: false, message: 'Unauthorized' });
-            return;
         }
 
 
@@ -76,9 +82,9 @@ const getCart = async (req, res) => {
                 const products = cartData.products;
                 console.log(products[0]._id);
                 const total = await cart.aggregate([{ $match: { userId: userData._id } }, { $unwind: "$products" }, { $project: { productPrice: "$products.productPrice", count: "$products.count" } }, { $group: { _id: null, total: { $sum: { $multiply: ["$productPrice", "$count"] } } } }]);
-                // console.log(total);
+                console.log(total);
                 const Total = total[0].total;
-                // console.log(Total);
+                console.log(Total);
                 const userCartId = userData._id
                 // console.log(userCartId);
                 // console.log(session);

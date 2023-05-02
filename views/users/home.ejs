@@ -86,8 +86,8 @@
     </section> -->
     <!-- Categories Section End -->
 
-     <!--------------------------- displayed banners ---------------------------------------->
-     <% if (bannerData.length> 0) { %>
+    <!--------------------------- displayed banners ---------------------------------------->
+    <% if (bannerData.length> 0) { %>
         <div id="myCarousel" class="carousel slide" data-ride="carousel" style="margin-top: 50px;">
             <!-- Carousel items -->
             <div class="carousel-inner">
@@ -117,12 +117,12 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-    <% } %>
-     <!-- ---------------------------------------------------------------------------------- -->
+        <% } %>
+            <!-- ---------------------------------------------------------------------------------- -->
 
 
-    <!-- Featured Section Begin -->
-    <section class="featured spad">
+            <!-- Featured Section Begin -->
+            <section class="featured spad">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
@@ -173,11 +173,11 @@
                     </div>
 
                 </div>
-    </section>
-    <!-- Featured Section End -->
+            </section>
+            <!-- Featured Section End -->
 
-    <!-- Banner Begin -->
-    <!-- <div class="banner">
+            <!-- Banner Begin -->
+            <!-- <div class="banner">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6">
@@ -193,10 +193,10 @@
             </div>
         </div>
     </div> -->
-    <!-- Banner End -->
+            <!-- Banner End -->
 
-    <!-- Latest Product Section Begin -->
-    <!-- <section class="latest-product spad">
+            <!-- Latest Product Section Begin -->
+            <!-- <section class="latest-product spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-md-6">
@@ -397,10 +397,10 @@
             </div>
         </div>
     </section> -->
-    <!-- Latest Product Section End -->
+            <!-- Latest Product Section End -->
 
-    <!-- Blog Section Begin -->
-    <!-- <section class="from-blog spad">
+            <!-- Blog Section Begin -->
+            <!-- <section class="from-blog spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -458,84 +458,95 @@
             </div>
         </div>
     </section> -->
-    <!-- Blog Section End -->
+            <!-- Blog Section End -->
 
 
-    <script>
-        function show(id) {
-            $.ajax({
-                url: "/addToCart",
-                method: "post",
-                data: {
-                    id: id
-                },
-                success: (response) => {
-                    if (response.success) {
-                        swal.fire({
-                            position: 'center',
-                            icon: 'success',
-                            title: 'product added to cart',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    }
-                },
-                error: (xhr) => {
-                    if (xhr.status === 401) {
-                        window.location.href = '/login';
-                    }
-                }
-            });
-        }
-
-        function addtoWishlist(id) {
-            console.log(id)
-            $.ajax({
-                url: '/addtowhishlist',
-                method: 'post',
-                data: {
-                    id: id
-                },
-                success: (response) => {
-                    if (response.status) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'product added to wishlist',
-                            showConfirmButton: false,
-                            timer: 1000,
-
-                        })
-
-                    } else if (response.productExit) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Product already added to wishlist',
-                            showConfirmButton: false,
-                            timer: 1000
-
-                        })
-
-                    }
-                    else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Plz SignIn!',
-                            showConfirmButton: false,
-                            timer: 1000
-                        })
-
-                    }
+            <script>
+                function show(id) {
+                    $.ajax({
+                        url: "/addToCart",
+                        method: "post",
+                        data: {
+                            id: id
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: 'Product added to cart',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }
+                        },
+                        error: (xhr) => {
+                            if (xhr.status === 401) {
+                                window.location.href = '/login';
+                            } else if (xhr.status === 400) {
+                                const response = xhr.responseJSON;
+                                swal.fire({
+                                    position: 'center',
+                                    icon: 'error',
+                                    title: response.message,
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                        }
+                    });
                 }
 
-            })
-        }
-
-    </script>
 
 
+                function addtoWishlist(id) {
+                    console.log(id)
+                    $.ajax({
+                        url: '/addtowhishlist',
+                        method: 'post',
+                        data: {
+                            id: id
+                        },
+                        success: (response) => {
+                            if (response.status) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'product added to wishlist',
+                                    showConfirmButton: false,
+                                    timer: 1000,
+
+                                })
+
+                            } else if (response.productExit) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Product already added to wishlist',
+                                    showConfirmButton: false,
+                                    timer: 1000
+
+                                })
+
+                            }
+                            else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Plz SignIn!',
+                                    showConfirmButton: false,
+                                    timer: 1000
+                                })
+
+                            }
+                        }
+
+                    })
+                }
+
+            </script>
 
 
 
-    <%- include('../partials/users/footer.ejs') %>
+
+
+            <%- include('../partials/users/footer.ejs') %>

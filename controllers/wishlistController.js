@@ -86,7 +86,10 @@ const addToCartFromWishlist = async (req, res) => {
         const session = req.session.user_id
         const userData = await user.findById({ _id: session })
 
-        const cartData = await cart.findOne({ userId: session })
+        if(productData.stock<1){
+            return res.status(400).json({ success: false, message: 'Out of stock' });
+        }else{
+            const cartData = await cart.findOne({ userId: session })
         if (cartData) {
             const productExists = await cartData.products.findIndex((argument) => argument.productId == productid)
             if (productExists != -1) {
@@ -116,6 +119,10 @@ const addToCartFromWishlist = async (req, res) => {
                 res.redirect('/wishlist')
             }
         }
+
+        }
+
+        
     } catch (error) {
         console.log(error.message)
     }

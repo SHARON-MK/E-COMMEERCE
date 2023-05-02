@@ -12,14 +12,15 @@
                         <div class="hero__categories">
                             <div class="filter__sort">
                                 <span>Sort by price</span>
-                                <select name="price" id="price" onchange="location ='/shop?value='+value+'&category=<%= Category %>&search=<%= Search %>'" >
-                                    <% if(price == "High"){ %>
+                                <select name="price" id="price"
+                                    onchange="location ='/shop?value='+value+'&category=<%= Category %>&search=<%= Search %>'">
+                                    <% if(price=="High" ){ %>
                                         <option value="Low"> Low To High</option>
                                         <option value="High" selected>High To Low</option>
-                                    <%} else {%>
-                                        <option value="Low" selected> Low To High</option>
-                                        <option value="High">High To Low</option>
-                                    <%} %>
+                                        <%} else {%>
+                                            <option value="Low" selected> Low To High</option>
+                                            <option value="High">High To Low</option>
+                                            <%} %>
                                 </select>
                             </div>
 
@@ -30,7 +31,8 @@
                             <ul>
                                 <% categoryData.forEach((value,index)=>{ %>
 
-                                    <li><a href="/shop?category=<%= value.name %>&value=<%= price %>&search=<%= Search %>">
+                                    <li><a
+                                            href="/shop?category=<%= value.name %>&value=<%= price %>&search=<%= Search %>">
                                             <%=value.name%>
                                         </a></li>
 
@@ -38,10 +40,11 @@
 
                             </ul>
                             <div style="margin-top: 20px; margin-left: 45px;">
-                                <a href="/shop" style="text-decoration: none; color: black;"><span class="icon_close"></span>  Clear Filter</a>
-                           
+                                <a href="/shop" style="text-decoration: none; color: black;"><span
+                                        class="icon_close"></span> Clear Filter</a>
+
                             </div>
-                            
+
                         </div>
 
                     </div>
@@ -50,9 +53,9 @@
                     <div class="filter__item">
                         <div class="row">
                             <div class="hero__search">
-                               
+
                                 <div class="hero__search__form">
-                                    
+
 
                                     <form action="/shop?value=<%= price %>&category=<%= Category %>" method="get">
                                         <input type="text" name="search" placeholder="Which book you are looking for?">
@@ -66,26 +69,30 @@
                     <div class="row">
                         <% if(productData.length>0){
                             for(let i=0;i < productData.length;i++){ %>
-                            <div class="col-lg-4 col-md-6 col-sm-6">
-                                <div class="product__item">
-                                    <div class="product__item__pic set-bg"
-                                        data-setbg="../productimages/<%=productData[i].image[0]%>">
-                                        <ul class="product__item__pic__hover">
-                                            <li><a href="/product?id=<%= productData[i]._id%>"><i
-                                                        class="fa fa-eye view-btn"></i></a></li>
-                                            <li><a href='#' onclick="show('<%-productData[i]._id%>')"><i
-                                                        class="fa fa-shopping-cart"></i></a></li>
-                                            <li><a onclick="addtoWishlist('<%-productData[i]._id%>')"><i
-                                                        class="fa fa-heart love-btn"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__item__text">
-                                        <h6><a href="#"><%=productData[i].name %></a></h6>
-                                        <h5><%=productData[i].price %></h5>
+                                <div class="col-lg-4 col-md-6 col-sm-6">
+                                    <div class="product__item">
+                                        <div class="product__item__pic set-bg"
+                                            data-setbg="../productimages/<%=productData[i].image[0]%>">
+                                            <ul class="product__item__pic__hover">
+                                                <li><a href="/product?id=<%= productData[i]._id%>"><i
+                                                            class="fa fa-eye view-btn"></i></a></li>
+                                                <li><a href='#' onclick="show('<%-productData[i]._id%>')"><i
+                                                            class="fa fa-shopping-cart"></i></a></li>
+                                                <li><a onclick="addtoWishlist('<%-productData[i]._id%>')"><i
+                                                            class="fa fa-heart love-btn"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="product__item__text">
+                                            <h6><a href="#">
+                                                    <%=productData[i].name %>
+                                                </a></h6>
+                                            <h5>
+                                                <%=productData[i].price %>
+                                            </h5>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <% } } %>
+                                <% } } %>
                     </div>
                     <!-- <div class="product__pagination">
                         <a href="#">1</a>
@@ -114,7 +121,7 @@
                         swal.fire({
                             position: 'center',
                             icon: 'success',
-                            title: 'product added to cart',
+                            title: 'Product added to cart',
                             showConfirmButton: false,
                             timer: 1500
                         });
@@ -123,6 +130,15 @@
                 error: (xhr) => {
                     if (xhr.status === 401) {
                         window.location.href = '/login';
+                    } else if (xhr.status === 400) {
+                        const response = xhr.responseJSON;
+                        swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
                     }
                 }
             });
