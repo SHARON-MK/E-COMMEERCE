@@ -53,12 +53,13 @@
                                 <tbody>
                                     <% if (message.length> 0) { %>
                                         <% for (let i=0; i < message.length; i++) { %>
-                                            <tr>
+                                            <tr onclick="/login">
                                                 <th scope="row">
                                                     <%= i+1 %>
                                                 </th>
                                                 <td>
-                                                    <%= message[i]._id %>
+                                                    <a href="/singleorderview?id=<%= message[i]._id %>"> <%= message[i]._id %></a>
+                                                   
                                                 </td>
                                                 <td>
 

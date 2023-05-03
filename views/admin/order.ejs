@@ -30,7 +30,9 @@
                             <%= i+1 %>
                           </th>
                           <td>
-                            <%= message[i].user %>
+                            <a href="/admin/orders/singleorder?id=<%= message[i]._id %>">
+                              <%= message[i].user %>
+                            </a>
                           </td>
                           <td>
 
@@ -47,34 +49,34 @@
                             <td>Placed</td>
                             <td><a style="color:rgb(21, 232, 10);"
                                 href="/admin/editorder?id=<%=message[i]._id%>">Delivered</a></td>
-                          <% } %>
+                            <% } %>
 
-                          <% if (message[i].status=='delivered' ) { %>
+                              <% if (message[i].status=='delivered' ) { %>
                                 <td>Delivered</td>
                                 <td>-</td>
-                          <% } %>
+                                <% } %>
 
-                          <% if (message[i].status=='req-for-cancellation' ) { %>
+                                  <% if (message[i].status=='req-for-cancellation' ) { %>
                                     <td>Requested for cancellation</td>
                                     <td><a style="color:rgb(8, 237, 8);"
                                         href="/admin/editorder?id=<%=message[i]._id%>">Approve</a></td>
-                          <% } %>
+                                    <% } %>
 
-                          <% if (message[i].status=='cancelled' ) { %>
-                            <td>Cancelled</td>
-                            <td>-</td>
-                          <% } %>
+                                      <% if (message[i].status=='cancelled' ) { %>
+                                        <td>Cancelled</td>
+                                        <td>-</td>
+                                        <% } %>
 
-                          <% if (message[i].status=='req-for-return' ) { %>
-                            <td>Requested for return</td>
-                            <td><a style="color:rgb(8, 241, 35);"
-                                href="/admin/editorder?id=<%=message[i]._id%>">Approve</a></td>
-                          <% } %>
+                                          <% if (message[i].status=='req-for-return' ) { %>
+                                            <td>Requested for return</td>
+                                            <td><a style="color:rgb(8, 241, 35);"
+                                                href="/admin/editorder?id=<%=message[i]._id%>">Approve</a></td>
+                                            <% } %>
 
-                          <% if (message[i].status=='returned' ) { %>
-                            <td>Returned</td>
-                            <td>-</td>
-                          <% } %>
+                                              <% if (message[i].status=='returned' ) { %>
+                                                <td>Returned</td>
+                                                <td>-</td>
+                                                <% } %>
 
                         </tr>
                         <% } %>

@@ -13,15 +13,15 @@ const addToCart = async (req, res) => {
         const productData = await product.findById({ _id: productId });
 
         const productStock = productData.stock
-        if(productStock<1){
+        if (productStock < 1) {
             return res.status(400).json({ success: false, message: 'Out of stock, keep it added in wishlist' });
-        }else{
+        } else {
 
             if (req.session.user_id) {
                 const userid = req.session.user_id;
                 const userData = await users.findById({ _id: userid });
                 const cartData = await cart.findOne({ userId: userid })
-    
+
                 if (cartData) {
                     const productExist = cartData.products.findIndex((product) => product.productId == productId)
                     if (productExist != -1) {
@@ -31,8 +31,8 @@ const addToCart = async (req, res) => {
                         await cart.findOneAndUpdate({ userId: req.session.user_id }, { $push: { products: { productId: productId, productPrice: productData.price } } })
                         res.json({ success: true });
                     }
-    
-    
+
+
                 } else {
                     const Cart = new cart({
                         userId: userData._id,
@@ -41,7 +41,7 @@ const addToCart = async (req, res) => {
                             productId: productId,
                             productPrice: productData.price
                         }]
-    
+
                     });
                     const cartData = await Cart.save();
                     if (cartData) {
@@ -50,7 +50,7 @@ const addToCart = async (req, res) => {
                         res.redirect('/home')
                     }
                 }
-    
+
             } else {
                 res.status(401).json({ success: false, message: 'Unauthorized' });
                 return;
@@ -73,6 +73,7 @@ const addToCart = async (req, res) => {
 const getCart = async (req, res) => {
     try {
         const session = req.session.user_id;
+
         const userData = await users.findOne({ _id: session });
         const cartData = await cart.findOne({ userId: session }).populate("products.productId");
 
@@ -80,15 +81,23 @@ const getCart = async (req, res) => {
 
             if (cartData.products.length > 0) {
                 const products = cartData.products;
-                console.log(products[0]._id);
-                const total = await cart.aggregate([{ $match: { userId: userData._id } }, { $unwind: "$products" }, { $project: { productPrice: "$products.productPrice", count: "$products.count" } }, { $group: { _id: null, total: { $sum: { $multiply: ["$productPrice", "$count"] } } } }]);
-                console.log(total);
-                const Total = total[0].total;
+
+                let Total = 0;
+                let outOfStockProducts = [];
+                for (let i = 0; i < products.length; i++) {
+                    const product = products[i].productId;
+                    const productStock = product.stock;
+                    const cartQuantity = products[i].count;
+                    if (productStock >= cartQuantity) {
+                        Total += products[i].productPrice * cartQuantity;
+                    } else {
+                        outOfStockProducts.push(product._id);
+                    }
+                }
                 console.log(Total);
-                const userCartId = userData._id
-                // console.log(userCartId);
-                // console.log(session);
-                res.render("cart", { userData, session, Total, userCartId, products });
+                const userCartId = userData._id;
+
+                res.render("cart", { userData, session, Total, userCartId, products, outOfStockProducts });
             }
             else {
 
@@ -103,6 +112,7 @@ const getCart = async (req, res) => {
     }
 };
 
+
 // ---------------------------------------------------------------------------------
 
 
@@ -112,16 +122,30 @@ const getCheckout = async function (req, res) {
     try {
         const session = req.session.user_id
         const userData = await users.findById({ _id: session })
-        const cartData = await cart.findOne({ userId: session }).populate("products.productId");
+        let cartData = await cart.findOne({ userId: session }).populate("products.productId");
         const products = cartData.products;
+
+        for (let i = 0; i < products.length; i++) {
+            let product = products[i];
+            let quantity = product.count;
+            let stock = product.productId.stock;
+            if (quantity > stock) {
+                cartData.products.splice(i, 1);
+            }
+        }
+
+        await cartData.save(); 
         const total = await cart.aggregate([{ $match: { userId: userData._id } }, { $unwind: "$products" }, { $project: { productPrice: "$products.productPrice", count: "$products.count" } }, { $group: { _id: null, total: { $sum: { $multiply: ["$productPrice", "$count"] } } } }]);
         const Total = total[0].total;
-        const addressdata = await address.findOne({ user: session })
-        res.render('checkout', { session, userData, addressdata, products, Total })
+
+        const addressdata = await address.findOne({ user: session });
+        res.render('checkout', { session, userData, addressdata, products: cartData.products, Total });
     } catch (error) {
         console.log(error);
     }
 }
+
+
 // --------------------------------------------------------------
 
 
@@ -197,7 +221,7 @@ const postAddAddress = async function (req, res) {
 // --------------------------------------------------------------
 const removeProduct = async function (req, res) {
     try {
-        const productid = req.query.id 
+        const productid = req.query.id
         const session = req.session.user_id
         await cart.findOneAndUpdate({ userId: session }, { $pull: { products: { productId: productid } } })
         res.redirect('/cart')
@@ -229,14 +253,25 @@ const postremoveProduct = async function (req, res) {
 // --------------------------------------------------------------
 const cartQuantityIncrese = async (req, res, next) => {
     try {
+
         let cartId = req.body.cart;
         const proId = req.body.product;
-        let quantity = req.body.quantity;
-        let count = req.body.count;
+        let quantity = parseInt(req.body.quantity)
+        let count = parseInt(req.body.count)
+
+
+        const Product = await product.findById({ _id: proId });
+
+        const productStock = Product.stock;
+
+        if (count === 1 && (quantity + 1) > productStock) {
+
+            return res.status(400).json({ success: false, message: 'Stock limit will be exceeded' });
+        }
+
         if ((count == -1) && (quantity == 1)) {
             res.json({ remove: true })
         } else {
-
             await cart.updateOne({ userId: req.session.user_id, "products.productId": proId }, { $inc: { "products.$.count": count } });
         }
         next();
@@ -249,9 +284,13 @@ const cartQuantityIncrese = async (req, res, next) => {
 
 
 
-const totalproductprice = async (req, res) => {
+
+const totalproductprice = async (req, res, proId) => {
     try {
-        
+
+
+
+
         const userd = await users.findOne({ _id: req.session.user_id })
         let total = await cart.aggregate([
             {

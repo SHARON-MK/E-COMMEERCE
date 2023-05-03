@@ -293,6 +293,24 @@ const getOrders = async (req, res) => {
 }
 // ---------------------------------------------------------------------------------
 
+// get single ORDERS details
+// ---------------------------------------------------------------------------------
+const getSingleOrder = async (req, res) => {
+    try {
+       
+        const id = req.query.id
+        
+        const orderData = await order.findById(id).populate("product.productId")
+       
+        const product = orderData.product
+       
+        res.render('singleorder', { product, orderData})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+// ---------------------------------------------------------------------------------
+
 
 // edit ORDERS
 // ---------------------------------------------------------------------------------
@@ -482,5 +500,6 @@ module.exports = {
     getOrders,
     editOrder,
     getSalesReport,
-    downloadSalesReport
+    downloadSalesReport,
+    getSingleOrder
 }

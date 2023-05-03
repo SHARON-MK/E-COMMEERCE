@@ -25,18 +25,20 @@ const placeOrder = async (req, res) => {
 
         const userData = await User.findOne({ _id: req.session.user_id });
         const session = req.session.user_id
+        
         const total = await cart.aggregate([{ $match: { userId: userData._id } }, { $unwind: "$products" }, { $project: { productPrice: "$products.productPrice", count: "$products.count" } }, { $group: { _id: null, total: { $sum: { $multiply: ["$productPrice", "$count"] } } } }]);
         // let Total = req.body.amount
+        console.log(total);
 
         let discountAmount = req.body.discountAmount
-        console.log('discntamnt' + discountAmount);
+        
 
         const TotalInitially = total.length > 0 ? total[0].total : 0;
         const Total = TotalInitially - discountAmount
-        console.log('total' + Total);
+        console.log(Total);
 
         const userWalletAmount = userData.wallet
-        console.log('wall-amnt' + userWalletAmount);
+        
 
         let paidAmount;
         let walletAmountUsed

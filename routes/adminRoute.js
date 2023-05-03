@@ -50,7 +50,10 @@ admin_route.get('/category/add',auth.isLogin,adminController.getAddCategoryPage)
 admin_route.get('/category/block',auth.isLogin,adminController.blockCategory)
 admin_route.get('/category/unblock',auth.isLogin,adminController.unBlockCategory)
 admin_route.get('/orders',auth.isLogin,adminController.getOrders)
+admin_route.get('/orders/singleorder',auth.isLogin,adminController.getSingleOrder)
 admin_route.get('/editorder',adminController.editOrder)
+
+
 
 // sales report
 admin_route.get('/salesreport',auth.isLogin,adminController.getSalesReport)

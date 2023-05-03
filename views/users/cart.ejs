@@ -37,45 +37,98 @@
                             </thead>
                             <tbody>
                                 <% for(let index=0; index<products.length; index++) { %>
-                                    <% let value = products[index]; %>
-                                    <tr>
-                                        <td class="shoping__cart__item">
-                                            <img src="../productimages/<%=value.productId.image%>" width="80px"
-                                                height="80px" alt="">
-                                            <h5>
-                                                <%=value.productId.name%>
-                                            </h5>
-                                        </td>
-                                        <td class="shoping__cart__price" id="<%=value.productId.name%>">                                         
-                                                <%=value.productId.price%>
-                                        </td>
-                                        <td class="shoping__cart__quantity">
-                                            <div class="quantity">
-                                                <div class="pro-qty">
-                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,'<%=index%>','<%=value.productId.name%>')">
-                                                        <span class="dec qtybtn change-qty">-</span>
-                                                    </a>
-                                                    <span>&nbsp;&nbsp; <span id="<%=value.productId._id%>">
-                                                        <%=value.count%>
-                                                    </span> &nbsp;&nbsp; </span>
-                                                    <a onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,'<%=index%>','<%=value.productId.name%>')">
-                                                        <span class="inc qtybtn change-qty">+</span>
-                                                    </a>
-                                                    <input type="hidden" class="pro-id" value="<%=value.productId._id%>">
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="shoping__cart__total" id="<%=index%>">
-                                            <%=value.productId.price*value.count%>
-                                        </td>
-                                        <td class="shoping__cart__item__close">
-                                            <a href="/removeproduct?id=<%=value.productId._id%>"><span
-                                                    class="icon_close" style="color: red;"></span></a>
-                                        </td>
-                                    </tr>
-                                <% } %>
+                                    <% let value=products[index]; %>
+                                        <% let stock=value.productId.stock; %>
+                                            <% let quantity=value.count; %>
+                                                <% let available=stock>= quantity; %>
+                                                    <tr>
+                                                        <td class="shoping__cart__item">
+                                                            <img src="../productimages/<%=value.productId.image%>"
+                                                                width="80px" height="80px" alt="">
+                                                            <h5>
+                                                                <%=value.productId.name%>
+                                                            </h5>
+                                                        </td>
+                                                        <% if (available) { %>
+                                                            <td class="shoping__cart__price"
+                                                                id="<%=value.productId.name%>">
+                                                                <%=value.productId.price%>
+                                                            </td>
+
+                                                            <td class="shoping__cart__quantity">
+                                                                <div class="quantity">
+                                                                    <div class="pro-qty">
+                                                                        <a
+                                                                            onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,'<%=index%>','<%=value.productId.name%>')">
+                                                                            <span class="dec qtybtn change-qty">-</span>
+                                                                        </a>
+                                                                        <span>&nbsp;&nbsp; <span
+                                                                                id="<%=value.productId._id%>">
+                                                                                <%=value.count%>
+                                                                            </span> &nbsp;&nbsp; </span>
+                                                                        <a
+                                                                            onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,'<%=index%>','<%=value.productId.name%>')">
+                                                                            <span class="inc qtybtn change-qty">+</span>
+                                                                        </a>
+                                                                        <input type="hidden" class="pro-id"
+                                                                            value="<%=value.productId._id%>">
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="shoping__cart__total" id="<%=index%>">
+                                                                <%=value.productId.price*value.count%>
+                                                            </td>
+                                                            <td class="shoping__cart__item__close">
+                                                                <a href="/removeproduct?id=<%=value.productId._id%>"><span
+                                                                        class="icon_close"
+                                                                        style="color: red;"></span></a>
+                                                            </td>
+
+                                                            <% } else { %>
+                                                                <td class="shoping__cart__price"
+                                                                    id="<%=value.productId.name%>">
+                                                                    <%=value.productId.price%>
+                                                                </td>
+
+                                                                <td class="shoping__cart__quantity">
+                                                                    <div class="quantity">
+                                                                        <div class="pro-qty">
+                                                                            <a
+                                                                                onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',-1,'<%=index%>','<%=value.productId.name%>')">
+                                                                                <span
+                                                                                    class="dec qtybtn change-qty">-</span>
+                                                                            </a>
+                                                                            <span>&nbsp;&nbsp; <span
+                                                                                    id="<%=value.productId._id%>">
+                                                                                    <%=value.count%>
+                                                                                </span> &nbsp;&nbsp; </span>
+                                                                            <a
+                                                                                onclick="changeQuantity('<%=products._id%>','<%=value.productId._id%>',1,'<%=index%>','<%=value.productId.name%>')">
+                                                                                <span
+                                                                                    class="inc qtybtn change-qty">+</span>
+                                                                            </a>
+                                                                            <input type="hidden" class="pro-id"
+                                                                                value="<%=value.productId._id%>">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="shoping__cart__total" >
+                                                                    <span id="<%=index%>"> Out of stock</span>
+                                                                        
+                                                                </td>
+                                                                <td class="shoping__cart__item__close">
+                                                                    <a
+                                                                        href="/removeproduct?id=<%=value.productId._id%>"><span
+                                                                            class="icon_close"
+                                                                            style="color: red;"></span></a>
+                                                                </td>
+
+                                                                <% } %>
+                                                    </tr>
+                                                    <% } %>
                             </tbody>
-                            
+
+
                         </table>
                     </div>
                 </div>
@@ -103,7 +156,7 @@
                     <div class="shoping__checkout">
                         <h5>Cart Total</h5>
                         <ul>
-                            <li>Subtotal <span id="total1" >
+                            <li>Subtotal <span id="total1">
                                     <%=Total%>
                                 </span></li>
                             <li>Total <span id="total">
@@ -120,12 +173,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
     <script>
-        function changeQuantity(cartId, proId, count,index,price) {
+        function changeQuantity(cartId, proId, count, index, price,index2) {
             let quantity = parseInt(document.getElementById(proId).innerHTML)
             let Index = parseInt(index)
             let count1 = parseInt(count)
             let Price = document.getElementById(price).innerHTML
            
+
             $.ajax({
                 url: '/cartqntyincrese',
                 data: {
@@ -142,11 +196,23 @@
                         document.getElementById(proId).innerHTML = quantity + count;
                         document.getElementById("total1").innerHTML = response.Total
                         document.getElementById("total").innerHTML = response.Total
-                        document.getElementById(Index).innerHTML = Price * (quantity + count1)
+                        document.getElementById(Index).innerHTML = Price * (quantity + count1)  
+                    }
+                },
+                error: (xhr) => {
+                    if (xhr.status === 400) {
+                        const response = xhr.responseJSON;
+                        swal.fire({
+                            position: 'center',
+                            icon: 'error',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
                     }
                 }
             })
-        }   
+        }
     </script>
 
     <script>

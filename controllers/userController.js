@@ -121,13 +121,13 @@ const getHome = async function (req, res) {
     const session = req.session.user_id
     const userData = await users.findOne({ _id: session })
     const productData = await products.find()
-    const bannerData = await banners.find({status:'true'})
+    const bannerData = await banners.find({ status: 'true' })
     try {
         if (session) {
-            res.render('home', { userData, session, productData,bannerData });
+            res.render('home', { userData, session, productData, bannerData });
         }
         else {
-            res.render('home', { userData, session, productData,bannerData})
+            res.render('home', { userData, session, productData, bannerData })
         }
     } catch (error) {
         console.log(error);
@@ -220,7 +220,7 @@ const postLogin = async (req, res) => {
         const passwordEntered = req.body.password
 
         const userDb = await users.findOne({ email: emailEntered })
-       
+
 
         if (userDb) {
             if (userDb.is_verified === 1 && userDb.is_block === 0) {
@@ -389,12 +389,12 @@ const getProductPage = async (req, res) => {
         const session = req.session.user_id
         const userData = await users.findOne({ _id: session })
         const id = req.query.id
-        const product = await products.findOne({_id:id})
+        const product = await products.findOne({ _id: id })
         if (session) {
-            res.render('product', { userData, session , product});
+            res.render('product', { userData, session, product });
         }
         else {
-            res.render('product', { userData, session , product})
+            res.render('product', { userData, session, product })
         }
     } catch (error) {
         console.log(error);
@@ -408,15 +408,15 @@ const getProductPage = async (req, res) => {
 const resendOtp = async (req, res) => {
     try {
         randomNumber = Math.floor(Math.random() * 9000) + 1000;
-        otp=randomNumber
-        sendVerifyMail(registerTimeName,registerTimeEmail,otp)
+        otp = randomNumber
+        sendVerifyMail(registerTimeName, registerTimeEmail, otp)
         res.redirect('otp-page')
-        
+
     } catch (error) {
         console.log(error);
     }
-    
-    
+
+
 }
 // --------------------------------------------------------------
 
@@ -426,18 +426,18 @@ const resendOtp = async (req, res) => {
 const getProfile = async (req, res) => {
     try {
         const id = req.session.user_id
-        const userData = await users.findById({_id:id})
-        const addressData = await address.findOne({user:id})
-        
+        const userData = await users.findById({ _id: id })
+        const addressData = await address.findOne({ user: id })
 
 
-        res.render('profile',{userData,addressData})
-        
+
+        res.render('profile', { userData, addressData })
+
     } catch (error) {
         console.log(error);
     }
-    
-    
+
+
 }
 // --------------------------------------------------------------
 
@@ -448,15 +448,35 @@ const getProfile = async (req, res) => {
 const getMyOrders = async (req, res) => {
     try {
         const userid = req.session.user_id
-        const orderData = await orders.find({userId:userid})
+        const orderData = await orders.find({ userId: userid })
         // console.log(orderData.product.productId.name);
-        res.render('my-orders',{message:orderData})
+        res.render('my-orders', { message: orderData })
 
-       
+
     } catch (error) {
         console.log(error);
     }
 }
+// --------------------------------------------------------------
+
+
+// To view single order details
+// --------------------------------------------------------------
+const getSingleOrderView = async (req, res) => {
+    try {
+        const userData = await users.findOne({ _id: req.session.user_id })
+        const id = req.query.id
+        const session = req.session.user_id
+        const orderData = await orders.findById(id).populate("product.productId")
+       
+        const product = orderData.product
+       
+        res.render('single-orderview', { product, orderData, session, userData })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 // --------------------------------------------------------------
 
 
@@ -466,17 +486,17 @@ const getMyOrders = async (req, res) => {
 const getShopPage = async (req, res) => {
     try {
         const session = req.session.user_id
-        const userData = await users.findById({_id:session})
-        
+        const userData = await users.findById({ _id: session })
 
-        let price = req.query.value 
+
+        let price = req.query.value
         let Category = req.query.category || "All"
         let Search = req.query.search || ""
         Search = Search.trim()
 
-        const categoryData = await category.find({is_block : false},{name : 1, _id :0})
+        const categoryData = await category.find({ is_block: false }, { name: 1, _id: 0 })
         let cat = []
-        for(i = 0; i < categoryData.length ; i++){
+        for (i = 0; i < categoryData.length; i++) {
             cat[i] = categoryData[i].name
         }
 
@@ -484,17 +504,17 @@ const getShopPage = async (req, res) => {
         Category === "All" ? Category = [...cat] : Category = req.query.category.split(',')
         price === "High" ? sort = -1 : sort = 1
 
-        const productData = 
-        await products.aggregate([
-            {$match : {name : {$regex : '^'+Search, $options : 'i'},category : {$in : Category}}},
-            {$sort : {price : sort}}
-           
-        ])
-       
+        const productData =
+            await products.aggregate([
+                { $match: { name: { $regex: '^' + Search, $options: 'i' }, category: { $in: Category } } },
+                { $sort: { price: sort } }
 
-        res.render('shop',{session,userData,categoryData,productData,price,Category,Search})
+            ])
 
-       
+
+        res.render('shop', { session, userData, categoryData, productData, price, Category, Search })
+
+
     } catch (error) {
         console.log(error);
     }
@@ -519,7 +539,8 @@ module.exports = {
     resendOtp,
     getProfile,
     getMyOrders,
-    getShopPage
+    getShopPage,
+    getSingleOrderView
 }
 
 
