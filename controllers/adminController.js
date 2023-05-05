@@ -500,6 +500,5 @@ module.exports = {
     getOrders,
     editOrder,
     getSalesReport,
-    downloadSalesReport,
     getSingleOrder
 }
