@@ -431,55 +431,55 @@ const getSalesReport = async (req, res) => {
 
 // download sales report
 // ---------------------------------------------------------------------------------
-const ejs = require('ejs')
-const pdf = require('html-pdf')
-const fs = require('fs')
-const path = require('path')
+// const ejs = require('ejs')
+// const pdf = require('html-pdf')
+// const fs = require('fs')
+// const path = require('path')
 
-const downloadSalesReport = async (req, res) => {
-    try {
-        const from = req.query.from
-        const to = req.query.to
-console.log('1');
-        // const orderdetails = await order.find({ status: { $ne: "cancelled" } }).populate("product.productId").sort({ Date: -1 })
-console.log('2');
-        // const products = orderdetails.product
-console.log('3');
+// const downloadSalesReport = async (req, res) => {
+//     try {
+//         const from = req.query.from
+//         const to = req.query.to
+// console.log('1');
+       
+// console.log('2');
+       
+// console.log('3');
 
-        const data = {
-            report: req.session.Orderdtls,
-            // product: products
-        }
+//         const data = {
+//             report: req.session.Orderdtls,
+           
+//         }
 
-        const filepath = path.resolve(__dirname, '../views/admin/salesreporttopdf.ejs')
-        const htmlstring = fs.readFileSync(filepath).toString()
+//         const filepath = path.resolve(__dirname, '../views/admin/salesreporttopdf.ejs')
+//         const htmlstring = fs.readFileSync(filepath).toString()
 
-        let option = {
-            format: "A3"
-        }
-        const ejsData = ejs.render(htmlstring, data)
-        pdf.create(ejsData, option).toFile('salesReport.pdf', (err, response) => {
-            if (err) console.log(err);
+//         let option = {
+//             format: "A3"
+//         }
+//         const ejsData = ejs.render(htmlstring, data)
+//         pdf.create(ejsData, option).toFile('salesReport.pdf', (err, response) => {
+//             if (err) console.log(err);
 
-            const filepath = path.resolve(__dirname, '../salesReport.pdf')
-            fs.readFile(filepath, (err, file) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(500).send('could not download file')
-                }
-                res.setHeader('Content-Type', 'application/pdf')
-                res.setHeader('Content-Disposition', 'attatchment;filename="Sales Report.pdf"')
+//             const filepath = path.resolve(__dirname, '../salesReport.pdf')
+//             fs.readFile(filepath, (err, file) => {
+//                 if (err) {
+//                     console.log(err);
+//                     return res.status(500).send('could not download file')
+//                 }
+//                 res.setHeader('Content-Type', 'application/pdf')
+//                 res.setHeader('Content-Disposition', 'attatchment;filename="Sales Report.pdf"')
 
-                res.send(file)
+//                 res.send(file)
 
-            })
-        })
-    } catch (error) {
+//             })
+//         })
+//     } catch (error) {
 
-        console.log(error.message);
+//         console.log(error.message);
 
-    }
-}
+//     }
+// }
 
 
 
